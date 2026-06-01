@@ -1,0 +1,51 @@
+<div class="p-6 max-w-2xl">
+  <div class="flex items-center gap-3 mb-6">
+    <a mat-icon-button routerLink="/patients">
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+    <div>
+      <h1 class="text-xl font-bold text-slate-800">
+        {{ isEdit() ? 'Editar Paciente' : 'Novo Paciente' }}
+      </h1>
+      <p class="text-sm text-slate-500 mt-0.5">Preencha os dados do paciente</p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-6">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nome completo</mat-label>
+        <input matInput formControlName="fullName" />
+        <mat-icon matPrefix class="text-slate-400">person</mat-icon>
+        @if (form.controls.fullName.hasError('required')) {
+          <mat-error>Nome é obrigatório</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Data de nascimento</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="dateOfBirth" />
+        <mat-icon matPrefix class="text-slate-400">cake</mat-icon>
+        <mat-datepicker-toggle matIconSuffix [for]="picker" />
+        <mat-datepicker #picker />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Alertas médicos / Anamnese</mat-label>
+        <textarea matInput formControlName="medicalAlerts" rows="4"
+          placeholder="Ex: Alérgico a penicilina, diabético, hipertenso..."></textarea>
+        <mat-icon matPrefix class="text-slate-400">warning</mat-icon>
+      </mat-form-field>
+
+      <div class="flex justify-end gap-3 pt-2">
+        <a mat-stroked-button routerLink="/patients">Cancelar</a>
+        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || loading()">
+          @if (loading()) { <mat-spinner diameter="18" color="accent" class="inline-block mr-2" /> }
+          {{ isEdit() ? 'Salvar alterações' : 'Cadastrar paciente' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
