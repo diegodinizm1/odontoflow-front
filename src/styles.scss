@@ -515,3 +515,15 @@ $agenda-gutter: 64px;
   box-shadow: 0 0 0 2px var(--brand-100);
 }
 
+
+/* ============================================================
+   Charge status pills
+   ============================================================ */
+.charge-pill {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 600;
+}
+.charge-pending  { background: var(--alert-bg); color: var(--alert-fg); }
+.charge-paid     { background: #E7F4EE; color: #1B7A4B; }
+.charge-canceled { background: #F1F1EE; color: var(--ink-faint); }
