@@ -1,59 +1,118 @@
-# OdontoflowFrontend
+# 🦷 OdontoFlow — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.13.
+> Angular SPA for a multi-tenant dental clinic SaaS: agenda with drag-and-drop, interactive odontogram, patient records, radiographs, finances and subscription billing.
 
-## Development server
+**🌐 Language:** **English** · [Português 🇧🇷](README.pt-BR.md)
 
-To start a local development server, run:
+![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Angular Material](https://img.shields.io/badge/Angular%20Material-M2-757575?logo=angular&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-```bash
-ng serve
+> ℹ️ **Portfolio project.** UI copy is in pt-BR (Brazilian product); the codebase, comments and commits are in English.
+
+---
+
+## Overview
+
+The frontend for **OdontoFlow**, a B2B platform for dental clinics. It pairs with the [Spring Boot API](https://github.com/diegodinizm1/odontoflow-back) and showcases a cohesive, hand-crafted design system — **"Clinical Calm"**: a warm paper background, a deep pine-teal accent, **Fraunces** display type with **Hanken Grotesk** for UI, and rounded Material Symbols.
+
+## Screenshots
+
+| Login | Weekly agenda (drag & drop) |
+|-------|------------------------------|
+| ![Login](docs/screenshots/login.png) | ![Agenda](docs/screenshots/agenda.png) |
+
+| Interactive odontogram | Patient record |
+|------------------------|----------------|
+| ![Odontogram](docs/screenshots/odontogram.png) | ![Record](docs/screenshots/prontuario.png) |
+
+| Subscription plans | Onboarding |
+|--------------------|------------|
+| ![Billing](docs/screenshots/billing.png) | ![Onboarding](docs/screenshots/onboarding.png) |
+
+<details>
+<summary>More — finances &amp; team</summary>
+
+| Finances | Team |
+|----------|------|
+| ![Finances](docs/screenshots/financial.png) | ![Team](docs/screenshots/team.png) |
+
+</details>
+
+## Features
+
+- 🔐 **Auth & onboarding** — login and a two-step clinic registration stepper, followed by a guided setup checklist.
+- 📅 **Agenda** — weekly calendar with appointment blocks you can **drag & drop to reschedule** (with server-side overlap checks), create and cancel.
+- 🦷 **Interactive odontogram** — anatomically drawn teeth (SVG), click-to-cycle tooth status, live legend; in-memory state saved as a single payload.
+- 👥 **Patients** — searchable list, create/edit form, full clinical record (odontogram + evolution timeline + radiographs).
+- 🖼️ **Radiographs** — direct browser upload to object storage via **pre-signed URLs**.
+- 💰 **Finances** — charges with status pills and monthly revenue summary.
+- 💳 **Billing** — Free / Essencial / Pro plan cards, current subscription and invoices.
+- 🧑‍⚕️ **Team** — invite and manage dentists and receptionists.
+
+## Tech stack
+
+| Area | Technology |
+|------|-----------|
+| Framework | Angular 21 (standalone components, **signals**) |
+| Language | TypeScript |
+| UI | Angular Material (M2) + Tailwind CSS v3 |
+| Type & icons | Fraunces · Hanken Grotesk · Material Symbols Rounded |
+| State | Signals + `model()` two-way binding |
+| HTTP | `HttpClient`, functional interceptor (JWT), route guards |
+| Routing | Lazy-loaded standalone routes |
+
+## Architecture notes
+
+- **Standalone + signals** throughout — no NgModules; reactive state via `signal`/`computed`/`model`.
+- **`authInterceptor`** attaches the JWT to API calls only — pre-signed storage URLs keep their own signature.
+- **`authGuard`** protects the app shell; the JWT is decoded client-side for `role`/`tenant_id`.
+- **Feature-first structure** with a shared `core/` (models, services, guards, interceptors).
+- **Design system in one place** — `styles.scss` defines the Material theme, design tokens and component primitives.
+
+```
+src/app
+├── core/
+│   ├── models/        # typed API contracts
+│   ├── services/      # Auth, Patient, Appointment, Charge, Billing, Team…
+│   ├── interceptors/  # authInterceptor
+│   ├── guards/        # authGuard
+│   └── utils/         # datetime helpers
+├── features/
+│   ├── auth/          # login, register
+│   ├── shell/         # sidenav layout
+│   ├── agenda/        # weekly calendar + drag & drop
+│   ├── patients/      # list, form, prontuário (odontogram, radiographs)
+│   ├── financial/     # charges
+│   ├── billing/       # plans & invoices
+│   ├── team/          # members
+│   └── onboarding/    # post-register checklist
+└── styles.scss        # design system (Material theme + tokens)
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Getting started
 
-## Code scaffolding
+### Prerequisites
+- Node.js 18+
+- The [OdontoFlow backend](https://github.com/diegodinizm1/odontoflow-back) running on `http://localhost:8080`
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Run
 
 ```bash
-ng generate --help
+npm install
+npm start          # ng serve → http://localhost:4200
 ```
 
-## Building
+The API base URL is configured in `src/environments/environment.ts` (`http://localhost:8080/api`).
 
-To build the project run:
+### Build
 
 ```bash
-ng build
+npm run build      # production build into dist/
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## License
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+MIT — built as a portfolio project.
