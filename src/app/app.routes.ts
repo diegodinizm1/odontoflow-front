@@ -22,6 +22,7 @@ export const routes: Routes = [
       { path: 'patients/:id/edit', loadComponent: () => import('./features/patients/form/patient-form').then(m => m.PatientFormComponent) },
       { path: 'patients/:id',      loadComponent: () => import('./features/patients/prontuario/prontuario').then(m => m.ProntuarioComponent) },
       { path: 'financeiro',        loadComponent: () => import('./features/financial/financial').then(m => m.FinancialComponent) },
+      { path: 'assinatura',        loadComponent: () => import('./features/billing/billing').then(m => m.BillingComponent) },
     ],
   },
   { path: '**', redirectTo: 'auth/login' },

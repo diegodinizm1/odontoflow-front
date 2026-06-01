@@ -527,3 +527,26 @@ $agenda-gutter: 64px;
 .charge-pending  { background: var(--alert-bg); color: var(--alert-fg); }
 .charge-paid     { background: #E7F4EE; color: #1B7A4B; }
 .charge-canceled { background: #F1F1EE; color: var(--ink-faint); }
+
+/* ============================================================
+   Billing / subscription
+   ============================================================ */
+.plan-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: var(--shadow-card);
+  transition: border-color .15s, box-shadow .15s;
+}
+.plan-card.plan-current { border-color: var(--brand-700); box-shadow: 0 0 0 1px var(--brand-700); }
+
+.sub-badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 600;
+}
+.sub-active    { background: #E7F4EE; color: #1B7A4B; }
+.sub-trialing  { background: var(--brand-50); color: var(--brand-700); }
+.sub-past_due  { background: var(--alert-bg); color: var(--alert-fg); }
+.sub-canceled  { background: #F1F1EE; color: var(--ink-faint); }

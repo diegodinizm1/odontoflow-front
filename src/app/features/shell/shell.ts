@@ -27,7 +27,8 @@ export class ShellComponent {
   readonly navItems: NavItem[] = [
     { label: 'Agenda',     icon: 'calendar_month', route: '/agenda' },
     { label: 'Pacientes',  icon: 'groups',         route: '/patients' },
-    { label: 'Financeiro', icon: 'payments',       route: '/financeiro' },
+    { label: 'Financeiro', icon: 'payments',          route: '/financeiro' },
+    { label: 'Assinatura', icon: 'workspace_premium', route: '/assinatura' },
   ];
 
   readonly initials = computed(() => {
