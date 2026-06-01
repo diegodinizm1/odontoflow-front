@@ -56,3 +56,23 @@ export function addMinutesToTime(time: string, minutes: number): string {
   const total = Math.min(h * 60 + m + minutes, 23 * 60 + 59);
   return `${pad(Math.floor(total / 60))}:${pad(total % 60)}`;
 }
+
+/** Parse a local datetime string 'YYYY-MM-DDTHH:mm:ss' into a Date. */
+export function parseLocal(iso: string): Date {
+  const [d, t] = iso.split('T');
+  const [y, mo, da] = d.split('-').map(Number);
+  const [h, mi, s] = (t ?? '00:00:00').split(':').map(Number);
+  return new Date(y, mo - 1, da, h, mi, s || 0);
+}
+
+/** Format a Date as local 'YYYY-MM-DDTHH:mm:ss' (no timezone). */
+export function formatLocal(date: Date): string {
+  return `${dateOnlyIso(date)}T${pad(date.getHours())}:${pad(date.getMinutes())}:00`;
+}
+
+/** Whole-day index between two dates (ignoring time). */
+export function dayIndex(from: Date, to: Date): number {
+  const a = new Date(from.getFullYear(), from.getMonth(), from.getDate()).getTime();
+  const b = new Date(to.getFullYear(), to.getMonth(), to.getDate()).getTime();
+  return Math.round((b - a) / 86400000);
+}

@@ -53,7 +53,7 @@
 
         <!-- day columns -->
         @for (day of days(); track day.getTime()) {
-          <div class="agenda-col" [class.is-today-col]="isToday(day)">
+          <div #dayColEl class="agenda-col" [class.is-today-col]="isToday(day)">
             @for (h of hours; track h) {
               <div class="agenda-cell" [style.height.px]="HOUR_PX" (click)="openCreate(day, h)"></div>
             }
@@ -61,6 +61,8 @@
             @for (appt of appointmentsForDay(day); track appt.id) {
               <button
                 class="appt-block"
+                cdkDrag
+                (cdkDragEnded)="onDrop(appt, $event)"
                 [class.appt-completed]="appt.status === 'COMPLETED'"
                 [style.top]="blockStyle(appt).top"
                 [style.height]="blockStyle(appt).height"

@@ -344,10 +344,20 @@ $agenda-gutter: 64px;
   box-shadow: 0 1px 2px rgba(23,48,46,.08);
   transition: transform .1s, box-shadow .1s;
 }
+.appt-block { cursor: grab; touch-action: none; }
 .appt-block:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 10px -3px rgba(23,48,46,.25);
 }
+.appt-block.cdk-drag-dragging {
+  cursor: grabbing;
+  z-index: 20;
+  transform: none;
+  box-shadow: 0 12px 28px -8px rgba(23,48,46,.4);
+  opacity: .96;
+}
+.appt-block.cdk-drag-dragging .appt-time,
+.appt-block.cdk-drag-dragging .appt-name { user-select: none; }
 .appt-time { font-size: 0.68rem; font-weight: 600; opacity: .75; }
 .appt-name {
   font-size: 0.8rem; font-weight: 600; line-height: 1.15;
