@@ -1,0 +1,92 @@
+<div class="page" style="max-width: 1100px;">
+
+  <!-- Header -->
+  <header class="flex items-center gap-3 mb-6">
+    <a mat-icon-button routerLink="/patients" matTooltip="Voltar">
+      <mat-icon class="text-ink-soft">arrow_back</mat-icon>
+    </a>
+    <div class="flex-1 min-w-0">
+      <h1 class="page-title truncate">{{ patient()?.fullName ?? 'Prontuário' }}</h1>
+      <p class="page-sub">
+        @if (age() !== null) { {{ age() }} anos · } Prontuário clínico
+      </p>
+    </div>
+    <a mat-stroked-button [routerLink]="['/patients', patient()?.id, 'edit']" [disabled]="!patient()">
+      <mat-icon>edit</mat-icon> Editar cadastro
+    </a>
+  </header>
+
+  @if (patient()?.medicalAlerts) {
+    <div class="alert-banner mb-6">
+      <span class="material-symbols-rounded" style="font-size:20px">warning</span>
+      <div>
+        <strong>Alertas médicos</strong>
+        <p>{{ patient()!.medicalAlerts }}</p>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="flex justify-center py-24"><mat-spinner diameter="38" /></div>
+  } @else {
+
+    <!-- Odontogram -->
+    <section class="card p-7 mb-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-display text-lg text-ink">Odontograma</h2>
+          <p class="text-sm text-ink-soft">{{ toothCount() }} dente(s) marcado(s)</p>
+        </div>
+      </div>
+      <app-odontogram [(data)]="odontogram" />
+    </section>
+
+    <!-- New evolution -->
+    <section class="card p-7 mb-6">
+      <h2 class="font-display text-lg text-ink mb-1">Nova evolução</h2>
+      <p class="text-sm text-ink-soft mb-4">Salva o estado atual do odontograma junto com a nota clínica.</p>
+      <textarea
+        [ngModel]="note()"
+        (ngModelChange)="note.set($event)"
+        rows="3"
+        placeholder="Descreva o procedimento realizado…"
+        class="w-full rounded-xl border border-line bg-surface p-3.5 text-sm text-ink placeholder:text-ink-faint focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none transition resize-y"></textarea>
+      <div class="flex justify-end mt-4">
+        <button mat-flat-button color="primary" (click)="save()" [disabled]="saving()">
+          @if (saving()) { <mat-spinner diameter="18" class="inline-spinner" /> }
+          @else { <mat-icon>save</mat-icon> }
+          Salvar evolução
+        </button>
+      </div>
+    </section>
+
+    <!-- History -->
+    <section>
+      <h2 class="font-display text-lg text-ink mb-4 px-1">Histórico de evoluções</h2>
+      @if (history().length === 0) {
+        <div class="card py-12 text-center text-ink-soft text-sm">
+          Nenhuma evolução registrada ainda.
+        </div>
+      } @else {
+        <ol class="timeline">
+          @for (rec of history(); track rec.id) {
+            <li class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div class="card p-5 flex-1">
+                <div class="flex items-center justify-between gap-3 mb-1.5">
+                  <span class="text-sm font-semibold text-ink">{{ rec.createdByName }}</span>
+                  <span class="text-xs text-ink-faint">{{ rec.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+                <p class="text-sm text-ink-soft whitespace-pre-line">
+                  {{ rec.clinicalNotes || 'Odontograma atualizado, sem nota.' }}
+                </p>
+              </div>
+            </li>
+          }
+        </ol>
+      }
+    </section>
+
+  }
+
+</div>

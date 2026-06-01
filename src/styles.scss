@@ -375,3 +375,90 @@ $agenda-gutter: 64px;
 .appt-dialog { padding: 22px 24px 18px; min-width: 380px; }
 .danger-text { color: #C0392B; }
 
+/* ============================================================
+   Odontogram
+   ============================================================ */
+.cond-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all .14s;
+}
+.cond-chip:hover { border-color: var(--brand-300); color: var(--ink); }
+.cond-active {
+  border-color: var(--brand-700);
+  background: var(--brand-50);
+  color: var(--brand-900);
+  font-weight: 600;
+}
+.cond-swatch { width: 13px; height: 13px; border-radius: 4px; display: inline-block; }
+.cond-swatch-border { border: 1.5px solid var(--line); }
+
+.arch {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 8px 4px;
+  overflow-x: auto;
+}
+.arch-row { display: flex; align-items: flex-start; gap: 5px; justify-content: center; }
+.arch-gap { width: 22px; flex-shrink: 0; }
+.arch-divider { height: 1px; background: var(--line); margin: 14px 0; }
+
+.tooth { display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
+.tooth-num { font-size: 0.62rem; font-weight: 600; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+.tooth-svg { width: 36px; height: 36px; display: block; }
+.tooth-svg polygon,
+.tooth-svg rect {
+  stroke: #CBD5CE;
+  stroke-width: 0.75;
+  cursor: pointer;
+  transition: fill .1s;
+}
+.tooth-svg polygon:hover,
+.tooth-svg rect:hover { stroke: var(--brand-700); stroke-width: 1.25; }
+.tooth-marker { font-size: 13px; font-weight: 700; pointer-events: none; }
+.tooth-x { stroke: #9CA3AF; stroke-width: 2; pointer-events: none; }
+
+/* ============================================================
+   Clinical record extras
+   ============================================================ */
+.alert-banner {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #FDECEC;
+  border: 1px solid #F4CFCF;
+  color: #9B2C2C;
+}
+.alert-banner strong { font-size: 0.82rem; font-weight: 700; }
+.alert-banner p { font-size: 0.85rem; margin: 2px 0 0; }
+
+.timeline { position: relative; padding-left: 26px; margin: 0; list-style: none; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 5px; top: 6px; bottom: 6px;
+  width: 2px;
+  background: var(--line);
+}
+.timeline-item { position: relative; display: flex; margin-bottom: 14px; }
+.timeline-dot {
+  position: absolute;
+  left: -26px; top: 18px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--brand-700);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 2px var(--brand-100);
+}
+

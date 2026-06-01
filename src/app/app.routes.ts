@@ -20,6 +20,7 @@ export const routes: Routes = [
       { path: 'patients',          loadComponent: () => import('./features/patients/list/patient-list').then(m => m.PatientListComponent) },
       { path: 'patients/new',      loadComponent: () => import('./features/patients/form/patient-form').then(m => m.PatientFormComponent) },
       { path: 'patients/:id/edit', loadComponent: () => import('./features/patients/form/patient-form').then(m => m.PatientFormComponent) },
+      { path: 'patients/:id',      loadComponent: () => import('./features/patients/prontuario/prontuario').then(m => m.ProntuarioComponent) },
     ],
   },
   { path: '**', redirectTo: 'auth/login' },
