@@ -1,0 +1,79 @@
+<div class="appt-dialog">
+
+  <div class="flex items-center justify-between mb-1">
+    <h2 class="font-display text-xl text-ink m-0">{{ isEdit() ? 'Editar consulta' : 'Novo agendamento' }}</h2>
+    <button mat-icon-button (click)="close()" tabindex="-1">
+      <mat-icon class="text-ink-faint">close</mat-icon>
+    </button>
+  </div>
+
+  @if (isEdit()) {
+    <p class="text-sm text-ink-soft mb-5 flex items-center gap-1.5">
+      <span class="material-symbols-rounded" style="font-size:17px">person</span>
+      {{ data.appointment?.patientName }}
+    </p>
+  }
+
+  <form [formGroup]="form" class="flex flex-col pt-2">
+
+    @if (!isEdit()) {
+      <mat-form-field appearance="outline">
+        <mat-label>Paciente</mat-label>
+        <mat-select formControlName="patientId">
+          @for (p of patientList(); track p.id) {
+            <mat-option [value]="p.id">{{ p.fullName }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.patientId.hasError('required')) {
+          <mat-error>Selecione um paciente</mat-error>
+        }
+      </mat-form-field>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Data</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="date" />
+      <mat-datepicker-toggle matIconSuffix [for]="picker" />
+      <mat-datepicker #picker />
+    </mat-form-field>
+
+    <div class="grid grid-cols-2 gap-3">
+      <mat-form-field appearance="outline">
+        <mat-label>Início</mat-label>
+        <mat-select formControlName="startTime" (selectionChange)="onStartChange($event.value)">
+          @for (t of times; track t) { <mat-option [value]="t">{{ t }}</mat-option> }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Término</mat-label>
+        <mat-select formControlName="endTime">
+          @for (t of times; track t) { <mat-option [value]="t">{{ t }}</mat-option> }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="flex items-center justify-between gap-3 pt-2">
+      <div>
+        @if (isEdit() && data.appointment?.status === 'SCHEDULED') {
+          <button mat-button type="button" class="danger-text" (click)="cancelAppointment()">
+            <mat-icon>event_busy</mat-icon> Cancelar consulta
+          </button>
+        }
+      </div>
+      <div class="flex gap-2">
+        @if (isEdit() && data.appointment?.status === 'SCHEDULED') {
+          <button mat-stroked-button type="button" (click)="complete()">Concluir</button>
+        }
+        <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="form.invalid || loading()">
+          @if (loading()) {
+            <mat-spinner diameter="18" class="inline-spinner" />
+          } @else {
+            {{ isEdit() ? 'Salvar' : 'Agendar' }}
+          }
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>

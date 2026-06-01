@@ -259,3 +259,109 @@ mat-icon.mat-icon {
   box-shadow: var(--shadow-card);
 }
 
+/* ============================================================
+   Agenda (weekly grid)
+   ============================================================ */
+$agenda-gutter: 64px;
+
+.agenda-head {
+  display: grid;
+  grid-template-columns: $agenda-gutter repeat(6, 1fr);
+  border-bottom: 1px solid var(--line);
+  background: #FCFBF8;
+}
+.agenda-day-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+  border-left: 1px solid var(--line);
+  gap: 2px;
+}
+.agenda-dow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.agenda-dom {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.15rem;
+  color: var(--ink);
+  line-height: 1;
+}
+.agenda-day-head.is-today {
+  background: var(--brand-50);
+  .agenda-dow, .agenda-dom { color: var(--brand-700); }
+}
+
+.agenda-body {
+  display: grid;
+  grid-template-columns: $agenda-gutter repeat(6, 1fr);
+  max-height: calc(100vh - 230px);
+  overflow-y: auto;
+}
+.agenda-gutter { position: relative; }
+.agenda-hour-label {
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  text-align: right;
+  padding-right: 10px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line);
+}
+.agenda-col {
+  position: relative;
+  border-left: 1px solid var(--line);
+}
+.agenda-col.is-today-col { background: rgba(232, 242, 240, .35); }
+.agenda-cell {
+  border-top: 1px solid var(--line);
+  cursor: pointer;
+  transition: background-color .12s;
+}
+.agenda-cell:hover { background: var(--brand-50); }
+
+.appt-block {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 5px 8px;
+  border: none;
+  border-left: 3px solid var(--brand-700);
+  border-radius: 8px;
+  background: var(--brand-50);
+  color: var(--brand-900);
+  cursor: pointer;
+  overflow: hidden;
+  text-align: left;
+  box-shadow: 0 1px 2px rgba(23,48,46,.08);
+  transition: transform .1s, box-shadow .1s;
+}
+.appt-block:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -3px rgba(23,48,46,.25);
+}
+.appt-time { font-size: 0.68rem; font-weight: 600; opacity: .75; }
+.appt-name {
+  font-size: 0.8rem; font-weight: 600; line-height: 1.15;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.appt-block.appt-completed {
+  background: #F2F1ED;
+  border-left-color: var(--ink-faint);
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   Appointment dialog
+   ============================================================ */
+.appt-dialog { padding: 22px 24px 18px; min-width: 380px; }
+.danger-text { color: #C0392B; }
+

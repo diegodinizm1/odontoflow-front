@@ -1,0 +1,79 @@
+<div class="page" style="max-width: none;">
+
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Agenda</h1>
+      <p class="page-sub">
+        {{ weekLabel().start | date:'dd MMM' }} – {{ weekLabel().end | date:'dd MMM, y' }}
+      </p>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="flex items-center rounded-xl border border-line bg-surface overflow-hidden">
+        <button mat-icon-button (click)="prevWeek()" matTooltip="Semana anterior">
+          <mat-icon class="text-ink-soft">chevron_left</mat-icon>
+        </button>
+        <button (click)="goToday()" class="px-3 h-9 text-sm font-medium text-ink-soft hover:text-ink border-x border-line">Hoje</button>
+        <button mat-icon-button (click)="nextWeek()" matTooltip="Próxima semana">
+          <mat-icon class="text-ink-soft">chevron_right</mat-icon>
+        </button>
+      </div>
+      <button mat-flat-button color="primary" (click)="openCreate()">
+        <mat-icon>add</mat-icon>
+        Novo agendamento
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="flex justify-center py-24"><mat-spinner diameter="38" /></div>
+  } @else {
+    <div class="card overflow-hidden">
+
+      <!-- Day headers -->
+      <div class="agenda-head">
+        <div class="agenda-gutter"></div>
+        @for (day of days(); track day.getTime()) {
+          <div class="agenda-day-head" [class.is-today]="isToday(day)">
+            <span class="agenda-dow">{{ day | date:'EEE' }}</span>
+            <span class="agenda-dom">{{ day | date:'dd' }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Scrollable grid -->
+      <div class="agenda-body">
+        <!-- time gutter -->
+        <div class="agenda-gutter">
+          @for (h of hours; track h) {
+            <div class="agenda-hour-label" [style.height.px]="HOUR_PX">
+              {{ h }}:00
+            </div>
+          }
+        </div>
+
+        <!-- day columns -->
+        @for (day of days(); track day.getTime()) {
+          <div class="agenda-col" [class.is-today-col]="isToday(day)">
+            @for (h of hours; track h) {
+              <div class="agenda-cell" [style.height.px]="HOUR_PX" (click)="openCreate(day, h)"></div>
+            }
+
+            @for (appt of appointmentsForDay(day); track appt.id) {
+              <button
+                class="appt-block"
+                [class.appt-completed]="appt.status === 'COMPLETED'"
+                [style.top]="blockStyle(appt).top"
+                [style.height]="blockStyle(appt).height"
+                (click)="openEdit(appt, $event)">
+                <span class="appt-time">{{ timeRange(appt) }}</span>
+                <span class="appt-name">{{ appt.patientName }}</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+
+</div>

@@ -43,7 +43,7 @@ export class LoginComponent {
 
     this.loading.set(true);
     this.authService.login(this.form.getRawValue()).subscribe({
-      next: () => this.router.navigate(['/patients']),
+      next: () => this.router.navigate(['/agenda']),
       error: (err: HttpErrorResponse) => {
         const api = err.error as ApiError;
         this.snackBar.open(api?.message ?? 'Erro ao fazer login.', 'Fechar', { duration: 4000 });
