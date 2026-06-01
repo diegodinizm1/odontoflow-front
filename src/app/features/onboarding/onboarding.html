@@ -1,0 +1,55 @@
+<div class="page" style="max-width: 720px;">
+
+  <div class="text-center mb-8 mt-2">
+    <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-700 text-white mb-4">
+      <span class="material-symbols-rounded" style="font-size:30px">waving_hand</span>
+    </div>
+    <h1 class="font-display text-3xl text-ink">Bem-vindo(a) ao OdontoFlow</h1>
+    <p class="text-ink-soft mt-2">Vamos preparar sua clínica em poucos passos.</p>
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center py-16"><mat-spinner diameter="38" /></div>
+  } @else {
+
+    <!-- progress -->
+    <div class="flex items-center gap-3 mb-6">
+      <div class="flex-1 h-2 rounded-full bg-line overflow-hidden">
+        <div class="h-full bg-brand-600 transition-all"
+             [style.width.%]="(doneCount() / steps().length) * 100"></div>
+      </div>
+      <span class="text-sm font-semibold text-ink-soft">{{ doneCount() }}/{{ steps().length }}</span>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      @for (step of steps(); track step.title) {
+        <div class="card p-5 flex items-center gap-4" [class.opacity-70]="step.done">
+          <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+               [class]="step.done ? 'bg-brand-700 text-white' : 'bg-brand-50 text-brand-700'">
+            <span class="material-symbols-rounded" style="font-size:22px">{{ step.done ? 'check' : step.icon }}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-ink" [class.line-through]="step.done">{{ step.title }}</p>
+            <p class="text-sm text-ink-soft">{{ step.description }}</p>
+          </div>
+          @if (!step.done) {
+            <a mat-stroked-button [routerLink]="step.route">{{ step.cta }}</a>
+          } @else {
+            <span class="text-sm font-semibold text-brand-700 flex items-center gap-1">
+              <span class="material-symbols-rounded" style="font-size:18px">task_alt</span> Feito
+            </span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="flex justify-center mt-8">
+      <a mat-flat-button color="primary" routerLink="/agenda" class="px-8 h-11">
+        {{ allDone() ? 'Tudo pronto — ir para a agenda' : 'Começar a usar' }}
+        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+      </a>
+    </div>
+
+  }
+
+</div>
