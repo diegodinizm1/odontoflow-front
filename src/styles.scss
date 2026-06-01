@@ -376,57 +376,64 @@ $agenda-gutter: 64px;
 .danger-text { color: #C0392B; }
 
 /* ============================================================
-   Odontogram
+   Odontogram (drawn teeth)
    ============================================================ */
-.cond-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
-  border-radius: 999px;
+.dotgrid {
+  background-image: radial-gradient(var(--line) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.odo-chart {
+  background: #FCFBF8;
   border: 1px solid var(--line);
-  background: var(--surface);
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--ink-soft);
-  cursor: pointer;
-  transition: all .14s;
+  border-radius: 14px;
+  padding: 18px 16px;
 }
-.cond-chip:hover { border-color: var(--brand-300); color: var(--ink); }
-.cond-active {
-  border-color: var(--brand-700);
-  background: var(--brand-50);
-  color: var(--brand-900);
-  font-weight: 600;
-}
-.cond-swatch { width: 13px; height: 13px; border-radius: 4px; display: inline-block; }
-.cond-swatch-border { border: 1.5px solid var(--line); }
+.odo-arch { display: flex; align-items: flex-end; justify-content: center; gap: 12px; }
+.odo-quad { display: flex; gap: 2px; }
+.odo-quad-end { justify-content: flex-end; }
+.odo-mid { width: 1px; align-self: stretch; background: rgba(0,0,0,.06); }
 
-.arch {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding: 8px 4px;
-  overflow-x: auto;
+.odo-divider { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+.odo-divider-line { flex: 1; height: 1px; background: var(--line); }
+.odo-divider-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-faint);
 }
-.arch-row { display: flex; align-items: flex-start; gap: 5px; justify-content: center; }
-.arch-gap { width: 22px; flex-shrink: 0; }
-.arch-divider { height: 1px; background: var(--line); margin: 14px 0; }
 
-.tooth { display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
-.tooth-num { font-size: 0.62rem; font-weight: 600; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
-.tooth-svg { width: 36px; height: 36px; display: block; }
-.tooth-svg polygon,
-.tooth-svg rect {
-  stroke: #CBD5CE;
-  stroke-width: 0.75;
-  cursor: pointer;
-  transition: fill .1s;
+.tooth-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: none; border: none; padding: 2px; cursor: pointer; outline: none;
 }
-.tooth-svg polygon:hover,
-.tooth-svg rect:hover { stroke: var(--brand-700); stroke-width: 1.25; }
-.tooth-marker { font-size: 13px; font-weight: 700; pointer-events: none; }
-.tooth-x { stroke: #9CA3AF; stroke-width: 2; pointer-events: none; }
+.tooth-svg { display: block; transition: transform .12s; }
+.tooth-btn:hover .tooth-svg { transform: translateY(-2px); }
+.tooth-btn:active .tooth-svg { transform: scale(.95); }
+.tooth-svg path { transition: fill .12s, stroke .12s; }
+.tooth-num {
+  font-size: 10.5px; font-weight: 600; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums; transition: color .12s;
+}
+.tooth-btn:hover .tooth-num { color: var(--ink); }
+.tooth-num-missing { color: var(--ink-faint); }
+
+.odo-legend {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 8px 16px; margin-top: 14px;
+}
+.odo-legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--ink-soft);
+}
+.odo-legend-swatch {
+  width: 14px; height: 14px; border-radius: 4px;
+  border-width: 2px; border-style: solid; flex-shrink: 0;
+}
+.odo-legend-count { color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+
+.odo-hint {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11.5px; color: var(--ink-faint); margin-top: 10px;
+}
 
 /* ============================================================
    Clinical record extras

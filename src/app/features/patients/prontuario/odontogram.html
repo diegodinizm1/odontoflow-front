@@ -1,47 +1,59 @@
 <div class="odontogram">
 
-  <!-- Palette -->
-  <div class="flex flex-wrap items-center gap-2 mb-6">
-    @for (c of conditions; track c.code) {
-      <button
-        type="button"
-        class="cond-chip"
-        [class.cond-active]="selected() === c.code"
-        (click)="selected.set(c.code)">
-        <span class="cond-swatch" [style.background]="c.code === 'HEALTHY' ? '#fff' : c.color"
-              [class.cond-swatch-border]="c.code === 'HEALTHY'"></span>
-        {{ c.label }}
-      </button>
+  <div class="odo-chart dotgrid">
+    <!-- Upper arch -->
+    <div class="odo-arch">
+      <div class="odo-quad odo-quad-end">
+        @for (id of upperRight; track id) {
+          <app-tooth [toothId]="id" [status]="statusOf(id)" (toothClick)="cycle(id)" />
+        }
+      </div>
+      <div class="odo-mid"></div>
+      <div class="odo-quad">
+        @for (id of upperLeft; track id) {
+          <app-tooth [toothId]="id" [status]="statusOf(id)" (toothClick)="cycle(id)" />
+        }
+      </div>
+    </div>
+
+    <div class="odo-divider">
+      <span class="odo-divider-line"></span>
+      <span class="odo-divider-label">Superior · Inferior</span>
+      <span class="odo-divider-line"></span>
+    </div>
+
+    <!-- Lower arch -->
+    <div class="odo-arch">
+      <div class="odo-quad odo-quad-end">
+        @for (id of lowerRight; track id) {
+          <app-tooth [toothId]="id" [status]="statusOf(id)" (toothClick)="cycle(id)" />
+        }
+      </div>
+      <div class="odo-mid"></div>
+      <div class="odo-quad">
+        @for (id of lowerLeft; track id) {
+          <app-tooth [toothId]="id" [status]="statusOf(id)" (toothClick)="cycle(id)" />
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend with live counts -->
+  <div class="odo-legend">
+    @for (s of statuses; track s.code) {
+      <div class="odo-legend-item">
+        <span class="odo-legend-swatch"
+              [style.background]="s.code === 'missing' ? 'transparent' : s.fill"
+              [style.border-color]="s.stroke"
+              [style.border-style]="s.code === 'missing' ? 'dashed' : 'solid'"></span>
+        {{ s.label }}<span class="odo-legend-count">({{ counts()[s.code] }})</span>
+      </div>
     }
   </div>
 
-  <!-- Arches -->
-  <div class="arch">
-    <div class="arch-row">
-      @for (id of upperRight; track id) {
-        <app-tooth [toothId]="id" [state]="toothState(id)" (surface)="apply(id, $event)" />
-      }
-      <div class="arch-gap"></div>
-      @for (id of upperLeft; track id) {
-        <app-tooth [toothId]="id" [state]="toothState(id)" (surface)="apply(id, $event)" />
-      }
-    </div>
-
-    <div class="arch-divider"></div>
-
-    <div class="arch-row">
-      @for (id of lowerRight; track id) {
-        <app-tooth [toothId]="id" [state]="toothState(id)" (surface)="apply(id, $event)" />
-      }
-      <div class="arch-gap"></div>
-      @for (id of lowerLeft; track id) {
-        <app-tooth [toothId]="id" [state]="toothState(id)" (surface)="apply(id, $event)" />
-      }
-    </div>
-  </div>
-
-  <p class="text-xs text-ink-faint mt-5">
-    Selecione uma condição acima e clique nas faces do dente. Use <strong>Hígido</strong> para limpar.
+  <p class="odo-hint">
+    <span class="material-symbols-rounded" style="font-size:14px">ads_click</span>
+    Clique em um dente para alterar o status.
   </p>
 
 </div>

@@ -20,27 +20,34 @@ export interface CreateClinicalRecordRequest {
   appointmentId?: string | null;
 }
 
-export interface ConditionDef {
+/* ---- Tooth statuses (drawn-teeth odontogram) ---- */
+export interface ToothStatusDef {
   code: string;
   label: string;
-  color: string;
-  whole: boolean; // affects the whole tooth (vs individual surfaces)
-  marker?: string; // single-letter badge for whole-tooth conditions
+  fill: string;
+  stroke: string;
 }
 
-export const CONDITIONS: ConditionDef[] = [
-  { code: 'HEALTHY',    label: 'Hígido',     color: '#FFFFFF', whole: true },
-  { code: 'CARIES',     label: 'Cárie',      color: '#DC2626', whole: false },
-  { code: 'RESTORED',   label: 'Restaurado', color: '#2563EB', whole: false },
-  { code: 'SEALANT',    label: 'Selante',    color: '#16A34A', whole: false },
-  { code: 'CROWN',      label: 'Coroa',      color: '#D97706', whole: true, marker: 'C' },
-  { code: 'ROOT_CANAL', label: 'Canal',      color: '#7C3AED', whole: true, marker: 'T' },
-  { code: 'IMPLANT',    label: 'Implante',   color: '#0F766E', whole: true, marker: 'I' },
-  { code: 'EXTRACTED',  label: 'Extraído',   color: '#9CA3AF', whole: true },
+export const TOOTH_STATUSES: ToothStatusDef[] = [
+  { code: 'healthy',  label: 'Saudável',   fill: '#ffffff', stroke: '#c5d0d3' },
+  { code: 'caries',   label: 'Cárie',      fill: '#fecdd3', stroke: '#f43f5e' },
+  { code: 'restored', label: 'Restaurado', fill: '#bae6fd', stroke: '#0ea5e9' },
+  { code: 'missing',  label: 'Ausente',    fill: '#f1f5f9', stroke: '#cbd5e1' },
+  { code: 'implant',  label: 'Implante',   fill: '#d3f3ee', stroke: '#0d8b7e' },
 ];
 
-export const CONDITION_BY_CODE: Record<string, ConditionDef> =
-  Object.fromEntries(CONDITIONS.map(c => [c.code, c]));
+export const STATUS_BY_CODE: Record<string, ToothStatusDef> =
+  Object.fromEntries(TOOTH_STATUSES.map(s => [s.code, s]));
+
+// click-to-cycle order
+export const STATUS_CYCLE = ['healthy', 'caries', 'restored', 'missing', 'implant'];
+
+/** Backend condition <-> status mapping (condition is stored uppercase). */
+export function statusFromState(state: ToothState | undefined): string {
+  if (!state) return 'healthy';
+  const c = state.condition.toLowerCase();
+  return STATUS_BY_CODE[c] ? c : 'healthy';
+}
 
 // FDI permanent dentition, displayed left→right per arch
 export const UPPER_RIGHT = ['18', '17', '16', '15', '14', '13', '12', '11'];

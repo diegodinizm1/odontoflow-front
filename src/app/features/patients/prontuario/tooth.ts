@@ -1,52 +1,35 @@
 import { Component, input, output, computed } from '@angular/core';
-import { ToothState, CONDITION_BY_CODE } from '../../../core/models/odontogram.model';
+import { STATUS_BY_CODE } from '../../../core/models/odontogram.model';
 
 @Component({
   selector: 'app-tooth',
   standalone: true,
   template: `
-    <div class="tooth">
-      <span class="tooth-num">{{ toothId() }}</span>
-      <svg viewBox="0 0 44 44" class="tooth-svg">
-        <polygon points="0,0 44,0 31,13 13,13"   [attr.fill]="fillOf('V')" [attr.fill-opacity]="op()" (click)="surface.emit('V')" />
-        <polygon points="44,0 44,44 31,31 31,13" [attr.fill]="fillOf('D')" [attr.fill-opacity]="op()" (click)="surface.emit('D')" />
-        <polygon points="0,44 44,44 31,31 13,31" [attr.fill]="fillOf('L')" [attr.fill-opacity]="op()" (click)="surface.emit('L')" />
-        <polygon points="0,0 0,44 13,31 13,13"   [attr.fill]="fillOf('M')" [attr.fill-opacity]="op()" (click)="surface.emit('M')" />
-        <rect x="13" y="13" width="18" height="18" [attr.fill]="fillOf('O')" [attr.fill-opacity]="op()" (click)="surface.emit('O')" />
-        @if (marker()) {
-          <text x="22" y="26" text-anchor="middle" class="tooth-marker" [attr.fill]="markerColor()">{{ marker() }}</text>
+    <button type="button" class="tooth-btn group" (click)="toothClick.emit()"
+            [title]="'Dente ' + toothId() + ' · ' + def().label">
+      <svg width="30" height="38" viewBox="0 0 36 44" class="tooth-svg">
+        <path
+          d="M6 14 C6 6 12 3 18 3 C24 3 30 6 30 14 C30 20 27 22 26 30 C25 37 24 41 21 41 C19 41 19 33 18 33 C17 33 17 41 15 41 C12 41 11 37 10 30 C9 22 6 20 6 14 Z"
+          [attr.fill]="isMissing() ? 'none' : def().fill"
+          [attr.stroke]="def().stroke"
+          stroke-width="2"
+          [attr.stroke-dasharray]="isMissing() ? '3 3' : '0'" />
+        @if (status() === 'implant') {
+          <circle cx="18" cy="16" r="3.4" fill="none" [attr.stroke]="def().stroke" stroke-width="2" />
         }
-        @if (extracted()) {
-          <line x1="5" y1="5" x2="39" y2="39" class="tooth-x" />
-          <line x1="39" y1="5" x2="5" y2="39" class="tooth-x" />
+        @if (status() === 'caries') {
+          <circle cx="18" cy="15" r="2.6" [attr.fill]="def().stroke" />
         }
       </svg>
-    </div>
+      <span class="tooth-num" [class.tooth-num-missing]="isMissing()">{{ toothId() }}</span>
+    </button>
   `,
 })
 export class ToothComponent {
   toothId = input.required<string>();
-  state   = input<ToothState | undefined>();
-  surface = output<string>();
+  status  = input<string>('healthy');
+  toothClick = output<void>();
 
-  private def = computed(() => {
-    const s = this.state();
-    return s ? CONDITION_BY_CODE[s.condition] : undefined;
-  });
-
-  readonly extracted = computed(() => this.state()?.condition === 'EXTRACTED');
-  readonly marker    = computed(() => this.def()?.marker ?? '');
-  readonly markerColor = computed(() => this.def()?.color ?? '#000');
-
-  /** whole-tooth conditions render as a light tint over every zone */
-  op() { return this.def()?.whole ? 0.32 : 1; }
-
-  fillOf(surfaceCode: string): string {
-    const s = this.state();
-    if (!s) return '#ffffff';
-    const def = this.def();
-    if (!def) return '#ffffff';
-    if (def.whole) return def.code === 'EXTRACTED' ? '#E5E7EB' : def.color;
-    return s.surfaces.includes(surfaceCode) ? def.color : '#ffffff';
-  }
+  readonly def = computed(() => STATUS_BY_CODE[this.status()] ?? STATUS_BY_CODE['healthy']);
+  readonly isMissing = computed(() => this.status() === 'missing');
 }

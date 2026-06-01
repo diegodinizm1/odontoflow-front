@@ -1,7 +1,7 @@
-import { Component, model, signal } from '@angular/core';
+import { Component, model, computed } from '@angular/core';
 import { ToothComponent } from './tooth';
 import {
-  CONDITIONS, CONDITION_BY_CODE, Odontogram, ToothState,
+  Odontogram, TOOTH_STATUSES, STATUS_CYCLE, statusFromState,
   UPPER_RIGHT, UPPER_LEFT, LOWER_RIGHT, LOWER_LEFT,
 } from '../../../core/models/odontogram.model';
 
@@ -14,46 +14,31 @@ import {
 export class OdontogramComponent {
   data = model.required<Odontogram>();
 
-  readonly conditions = CONDITIONS;
-  readonly selected = signal('CARIES');
-
+  readonly statuses = TOOTH_STATUSES;
   readonly upperRight = UPPER_RIGHT;
   readonly upperLeft  = UPPER_LEFT;
   readonly lowerRight = LOWER_RIGHT;
   readonly lowerLeft  = LOWER_LEFT;
 
-  toothState(id: string): ToothState | undefined {
-    return this.data()[id];
+  /** live counts per status across all 32 teeth */
+  readonly counts = computed(() => {
+    const all = [...UPPER_RIGHT, ...UPPER_LEFT, ...LOWER_RIGHT, ...LOWER_LEFT];
+    const c: Record<string, number> = { healthy: 0, caries: 0, restored: 0, missing: 0, implant: 0 };
+    const map = this.data();
+    for (const id of all) c[statusFromState(map[id])]++;
+    return c;
+  });
+
+  statusOf(toothId: string): string {
+    return statusFromState(this.data()[toothId]);
   }
 
-  apply(toothId: string, surface: string) {
-    const code = this.selected();
-    const def = CONDITION_BY_CODE[code];
+  cycle(toothId: string) {
+    const cur = this.statusOf(toothId);
+    const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(cur) + 1) % STATUS_CYCLE.length];
     const map: Odontogram = { ...this.data() };
-    const cur = map[toothId];
-
-    if (code === 'HEALTHY') {
-      if (cur) {
-        if (CONDITION_BY_CODE[cur.condition]?.whole) {
-          delete map[toothId];
-        } else {
-          const surfaces = cur.surfaces.filter(s => s !== surface);
-          if (surfaces.length) map[toothId] = { condition: cur.condition, surfaces };
-          else delete map[toothId];
-        }
-      }
-    } else if (def.whole) {
-      if (cur && cur.condition === code) delete map[toothId]; // toggle off
-      else map[toothId] = { condition: code, surfaces: [] };
-    } else {
-      const surfaces = cur && cur.condition === code ? [...cur.surfaces] : [];
-      const i = surfaces.indexOf(surface);
-      if (i >= 0) surfaces.splice(i, 1);
-      else surfaces.push(surface);
-      if (surfaces.length) map[toothId] = { condition: code, surfaces };
-      else delete map[toothId];
-    }
-
+    if (next === 'healthy') delete map[toothId];
+    else map[toothId] = { condition: next.toUpperCase(), surfaces: [] };
     this.data.set(map);
   }
 }
