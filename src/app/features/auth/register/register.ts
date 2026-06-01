@@ -55,7 +55,7 @@ export class RegisterComponent {
     this.authService.registerTenant(payload).subscribe({
       next: () => {
         this.snackBar.open('Clínica cadastrada com sucesso!', '', { duration: 3000 });
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/patients']);
       },
       error: (err: HttpErrorResponse) => {
         const api = err.error as ApiError;

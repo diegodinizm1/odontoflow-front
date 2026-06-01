@@ -5,7 +5,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -18,7 +17,7 @@ import { ApiError } from '../../../core/models/api-error.model';
   imports: [
     ReactiveFormsModule, RouterLink,
     MatInputModule, MatButtonModule, MatIconModule,
-    MatDatepickerModule, MatNativeDateModule, MatProgressSpinnerModule,
+    MatDatepickerModule, MatProgressSpinnerModule,
   ],
   templateUrl: './patient-form.html',
 })

@@ -1,21 +1,19 @@
-<div class="min-h-screen flex items-center justify-center px-4 py-10">
+<div class="min-h-screen flex items-center justify-center px-4 py-10 bg-slate-100">
   <div class="w-full max-w-lg">
 
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-700 mb-4">
-        <mat-icon class="text-white text-3xl">medical_services</mat-icon>
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-700 mb-4 shadow-md">
+        <span class="material-icons text-white" style="font-size:32px">medical_services</span>
       </div>
-      <h1 class="text-2xl font-bold text-slate-800">OdontoFlow</h1>
+      <h1 class="text-3xl font-bold text-slate-800">OdontoFlow</h1>
       <p class="text-slate-500 mt-1">Cadastre sua clínica</p>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
       <mat-stepper orientation="horizontal" linear #stepper>
 
-        <!-- Step 1: Clínica -->
         <mat-step [stepControl]="clinicForm" label="Clínica">
-          <form [formGroup]="clinicForm" class="flex flex-col gap-5 mt-6">
+          <form [formGroup]="clinicForm" class="flex flex-col gap-4 mt-6">
 
             <mat-form-field appearance="outline" class="w-full">
               <mat-label>Nome da Clínica</mat-label>
@@ -35,20 +33,18 @@
               }
             </mat-form-field>
 
-            <div class="flex justify-end">
+            <div class="flex justify-end mt-2">
               <button mat-flat-button color="primary" matStepperNext type="button"
-                [disabled]="clinicForm.invalid" class="h-11 px-6">
-                Próximo
-                <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+                [disabled]="clinicForm.invalid" class="h-10 px-6">
+                Próximo <mat-icon iconPositionEnd>arrow_forward</mat-icon>
               </button>
             </div>
 
           </form>
         </mat-step>
 
-        <!-- Step 2: Dentista Fundador -->
         <mat-step [stepControl]="userForm" label="Responsável">
-          <form [formGroup]="userForm" class="flex flex-col gap-5 mt-6">
+          <form [formGroup]="userForm" class="flex flex-col gap-4 mt-6">
 
             <mat-form-field appearance="outline" class="w-full">
               <mat-label>Nome completo</mat-label>
@@ -84,19 +80,13 @@
               }
             </mat-form-field>
 
-            <div class="flex justify-between">
-              <button mat-stroked-button matStepperPrevious type="button" class="h-11 px-6">
-                <mat-icon>arrow_back</mat-icon>
-                Voltar
+            <div class="flex justify-between mt-2">
+              <button mat-stroked-button matStepperPrevious type="button" class="h-10 px-5">
+                <mat-icon>arrow_back</mat-icon> Voltar
               </button>
-              <button
-                mat-flat-button color="primary" type="button"
-                (click)="submit()"
-                [disabled]="userForm.invalid || loading()"
-                class="h-11 px-6">
-                @if (loading()) {
-                  <mat-spinner diameter="20" color="accent" class="inline-block mr-2" />
-                }
+              <button mat-flat-button color="primary" type="button" (click)="submit()"
+                [disabled]="userForm.invalid || loading()" class="h-10 px-6">
+                @if (loading()) { <mat-spinner diameter="18" color="accent" class="inline-block mr-2" /> }
                 Cadastrar
               </button>
             </div>
@@ -105,10 +95,9 @@
         </mat-step>
 
       </mat-stepper>
-
     </div>
 
-    <p class="text-center text-slate-500 mt-6 text-sm">
+    <p class="text-center text-slate-500 mt-5 text-sm">
       Já tem uma conta?
       <a routerLink="/auth/login" class="text-primary-700 font-medium hover:underline">Fazer login</a>
     </p>

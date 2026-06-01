@@ -1,16 +1,16 @@
-<div class="min-h-screen flex items-center justify-center px-4">
+<div class="min-h-screen flex items-center justify-center px-4 bg-slate-100">
   <div class="w-full max-w-md">
 
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-700 mb-4">
-        <mat-icon class="text-white text-3xl">medical_services</mat-icon>
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-700 mb-4 shadow-md">
+        <span class="material-icons text-white" style="font-size:32px">medical_services</span>
       </div>
-      <h1 class="text-2xl font-bold text-slate-800">OdontoFlow</h1>
+      <h1 class="text-3xl font-bold text-slate-800">OdontoFlow</h1>
       <p class="text-slate-500 mt-1">Acesse sua conta</p>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-      <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-5">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-4">
 
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>E-mail</mat-label>
@@ -27,7 +27,7 @@
           <mat-label>Senha</mat-label>
           <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'" autocomplete="current-password" />
           <mat-icon matPrefix class="text-slate-400">lock</mat-icon>
-          <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())" [attr.aria-label]="'Mostrar senha'">
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())">
             <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           @if (form.controls.password.hasError('required')) {
@@ -39,10 +39,10 @@
           mat-flat-button
           color="primary"
           type="submit"
-          class="w-full h-12 text-base font-medium"
+          class="w-full h-11 text-base font-medium mt-2"
           [disabled]="loading()">
           @if (loading()) {
-            <mat-spinner diameter="22" color="accent" class="inline-block mr-2" />
+            <mat-spinner diameter="20" color="accent" class="inline-block mr-2" />
           }
           Entrar
         </button>
@@ -50,7 +50,7 @@
       </form>
     </div>
 
-    <p class="text-center text-slate-500 mt-6 text-sm">
+    <p class="text-center text-slate-500 mt-5 text-sm">
       Nova clínica?
       <a routerLink="/auth/register" class="text-primary-700 font-medium hover:underline">Cadastre-se aqui</a>
     </p>
