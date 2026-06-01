@@ -41,6 +41,55 @@
       <app-odontogram [(data)]="odontogram" />
     </section>
 
+    <!-- Radiographs / exams -->
+    <section class="card p-7 mb-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-display text-lg text-ink">Radiografias e exames</h2>
+          <p class="text-sm text-ink-soft">{{ fileList().length }} arquivo(s)</p>
+        </div>
+        <label class="upload-btn" [class.is-uploading]="uploading()">
+          @if (uploading()) {
+            <mat-spinner diameter="16" />
+            Enviando…
+          } @else {
+            <mat-icon style="font-size:18px">upload</mat-icon>
+            Enviar exame
+          }
+          <input type="file" multiple accept="image/*,application/pdf" hidden
+                 (change)="onPickFiles($event)" [disabled]="uploading()" />
+        </label>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        @for (f of fileList(); track f.id) {
+          <div class="file-tile group">
+            <a [href]="f.downloadUrl" target="_blank" rel="noopener" class="file-thumb">
+              @if (isImage(f)) {
+                <img [src]="f.downloadUrl" [alt]="f.fileName" loading="lazy" />
+              } @else {
+                <span class="material-symbols-rounded" style="font-size:30px">description</span>
+              }
+            </a>
+            <button class="file-del" (click)="removeFile(f)" matTooltip="Remover">
+              <mat-icon style="font-size:16px">close</mat-icon>
+            </button>
+            <div class="file-meta">
+              <span class="file-name">{{ f.fileName }}</span>
+              <span class="file-date">{{ f.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+        }
+
+        <label class="file-dropzone" [class.pointer-events-none]="uploading()">
+          <span class="material-symbols-rounded" style="font-size:24px">add_photo_alternate</span>
+          <span class="text-[11.5px] font-semibold">Arraste ou clique</span>
+          <input type="file" multiple accept="image/*,application/pdf" hidden
+                 (change)="onPickFiles($event)" [disabled]="uploading()" />
+        </label>
+      </div>
+    </section>
+
     <!-- New evolution -->
     <section class="card p-7 mb-6">
       <h2 class="font-display text-lg text-ink mb-1">Nova evolução</h2>
