@@ -1,53 +1,49 @@
 <mat-sidenav-container class="h-screen">
 
-  <!-- Sidenav -->
-  <mat-sidenav mode="side" opened class="w-64 border-r border-slate-200 bg-white flex flex-col">
+  <mat-sidenav mode="side" opened class="w-[264px] border-r border-line">
 
-    <!-- Logo -->
-    <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-100">
-      <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-primary-700 shrink-0">
-        <span class="material-icons text-white" style="font-size:20px">medical_services</span>
+    <!-- Brand -->
+    <div class="flex items-center gap-3 px-6 h-[68px] border-b border-line">
+      <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-brand-700 text-white shrink-0">
+        <span class="material-symbols-rounded" style="font-size:20px">dentistry</span>
       </div>
-      <div>
-        <p class="font-bold text-slate-800 text-[15px] leading-tight">OdontoFlow</p>
-        <p class="text-[11px] text-slate-400 leading-tight">Gestão Odontológica</p>
-      </div>
+      <span class="font-display text-lg font-semibold text-ink tracking-tight">OdontoFlow</span>
     </div>
 
     <!-- Nav -->
-    <nav class="flex-1 p-3 space-y-0.5">
-      <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-3 py-2">Menu</p>
+    <nav class="flex-1 px-3 py-5 overflow-y-auto">
+      <p class="text-[10px] font-bold text-ink-faint uppercase tracking-[0.12em] px-3 pb-2">Clínica</p>
       @for (item of navItems; track item.route) {
         <a
           [routerLink]="item.route"
-          routerLinkActive="bg-primary-50 !text-primary-700 font-semibold"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors text-sm no-underline">
-          <span class="material-icons" style="font-size:20px">{{ item.icon }}</span>
-          {{ item.label }}
+          routerLinkActive="nav-item-active"
+          class="nav-item">
+          <span class="material-symbols-rounded nav-icon" style="font-size:21px">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
         </a>
       }
     </nav>
 
     <!-- User -->
-    <div class="p-3 border-t border-slate-100">
-      <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-slate-50">
-        <div class="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
-          <span class="material-icons text-primary-700" style="font-size:16px">person</span>
+    <div class="px-3 pb-4 pt-2 border-t border-line">
+      <div class="flex items-center gap-3 px-2.5 py-2 rounded-xl hover:bg-paper transition-colors">
+        <div class="w-8 h-8 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center shrink-0 font-semibold text-xs">
+          {{ initials() }}
         </div>
-        <span class="text-xs text-slate-600 truncate flex-1">{{ auth.currentUser()?.email }}</span>
-        <button mat-icon-button (click)="auth.logout()" matTooltip="Sair" class="!w-7 !h-7 shrink-0">
-          <span class="material-icons text-slate-400" style="font-size:16px">logout</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-[13px] font-medium text-ink truncate leading-tight">{{ auth.currentUser()?.email }}</p>
+          <p class="text-[11px] text-ink-faint leading-tight">Dentista</p>
+        </div>
+        <button mat-icon-button (click)="auth.logout()" matTooltip="Sair" class="shrink-0">
+          <mat-icon class="text-ink-faint" style="font-size:19px">logout</mat-icon>
         </button>
       </div>
     </div>
 
   </mat-sidenav>
 
-  <!-- Main content -->
-  <mat-sidenav-content class="flex flex-col bg-slate-50">
-    <div class="flex-1 overflow-auto">
-      <router-outlet />
-    </div>
+  <mat-sidenav-content>
+    <router-outlet />
   </mat-sidenav-content>
 
 </mat-sidenav-container>

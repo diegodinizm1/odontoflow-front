@@ -4,23 +4,258 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   OdontoFlow · "Clinical Calm" design system
+   Warm paper, deep pine-teal, Fraunces + Hanken Grotesk
+   ============================================================ */
+
 @include mat.core();
 
-$primary: mat.m2-define-palette(mat.$m2-cyan-palette, 700, 500, 900);
-$accent:  mat.m2-define-palette(mat.$m2-teal-palette, A200, A100, A400);
-$warn:    mat.m2-define-palette(mat.$m2-red-palette);
+/* --- Custom pine-teal palette for Material --- */
+$odf-teal: (
+  50:  #e8f2f0,
+  100: #c5ded9,
+  200: #9fc9c1,
+  300: #79b3a9,
+  400: #5ca297,
+  500: #3f9186,
+  600: #39817a,
+  700: #2f6e66,
+  800: #265b54,
+  900: #163e39,
+  A100: #a8fff0,
+  A200: #76ffe6,
+  A400: #43ffdc,
+  A700: #2affd6,
+  contrast: (
+    50: #163e39, 100: #163e39, 200: #163e39, 300: #ffffff,
+    400: #ffffff, 500: #ffffff, 600: #ffffff, 700: #ffffff,
+    800: #ffffff, 900: #ffffff,
+    A100: #163e39, A200: #163e39, A400: #163e39, A700: #163e39,
+  ),
+);
+
+$odf-red: (
+  50:#fbeceb,100:#f5cfcc,200:#e89a93,300:#dd6f64,400:#d2554a,500:#c0392b,
+  600:#ad3327,700:#962b20,800:#7f241b,900:#5e1813,
+  A100:#ff8a80,A200:#ff5252,A400:#ff1744,A700:#d50000,
+  contrast:(50:#5e1813,100:#5e1813,200:#5e1813,300:#fff,400:#fff,500:#fff,
+    600:#fff,700:#fff,800:#fff,900:#fff,A100:#5e1813,A200:#fff,A400:#fff,A700:#fff),
+);
+
+$primary: mat.m2-define-palette($odf-teal, 700, 500, 900);
+$accent:  mat.m2-define-palette($odf-teal, 500, 300, 700);
+$warn:    mat.m2-define-palette($odf-red, 500);
+
+$typography: mat.m2-define-typography-config(
+  $font-family: '"Hanken Grotesk", system-ui, sans-serif',
+);
 
 $theme: mat.m2-define-light-theme((
   color: (primary: $primary, accent: $accent, warn: $warn),
-  typography: mat.m2-define-typography-config(),
+  typography: $typography,
   density: 0,
 ));
 
 @include mat.all-component-themes($theme);
 
-html, body {
-  height: 100%;
-  margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
-  background-color: #f1f5f9;
+/* --- Design tokens --- */
+:root {
+  --paper: #FBFAF7;
+  --surface: #FFFFFF;
+  --ink: #17302E;
+  --ink-soft: #5C706D;
+  --ink-faint: #90A09D;
+  --line: #E8E4DC;
+  --brand-700: #2F6E66;
+  --brand-50: #E8F2F0;
+
+  --shadow-card: 0 1px 2px rgba(23,48,46,.04), 0 12px 28px -16px rgba(23,48,46,.18);
+
+  /* Material shape tuning */
+  --mdc-shape-small: 11px;
+  --mdc-outlined-text-field-container-shape: 11px;
 }
+
+/* --- Base --- */
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: '"Hanken Grotesk"', system-ui, sans-serif;
+  background-color: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.font-display { font-family: 'Fraunces', Georgia, serif; }
+
+/* --- Material Symbols Rounded --- */
+.material-symbols-rounded,
+mat-icon.mat-icon {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-feature-settings: 'liga';
+  letter-spacing: normal;
+}
+
+/* ============================================================
+   Refined Material component overrides (no !important warfare)
+   ============================================================ */
+
+/* Buttons: softer radius, real weight, comfortable height */
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-button {
+  --mdc-filled-button-container-shape: 11px;
+  --mdc-outlined-button-container-shape: 11px;
+  --mdc-text-button-container-shape: 11px;
+  --mdc-protected-button-container-shape: 11px;
+  letter-spacing: 0.01em;
+  font-weight: 600;
+}
+.mat-mdc-unelevated-button:not(:disabled),
+.mat-mdc-raised-button:not(:disabled) {
+  --mdc-filled-button-container-height: 44px;
+}
+
+/* Form fields: tidy density, calm hint/subscript */
+.mat-mdc-form-field { width: 100%; }
+.mat-mdc-form-field-subscript-wrapper {
+  font-size: 0.72rem;
+}
+.mdc-text-field--outlined .mdc-notched-outline__leading,
+.mdc-text-field--outlined .mdc-notched-outline__trailing {
+  border-color: var(--line);
+}
+.mdc-text-field--outlined:not(.mdc-text-field--focused):hover
+  .mdc-notched-outline__leading,
+.mdc-text-field--outlined:not(.mdc-text-field--focused):hover
+  .mdc-notched-outline__trailing,
+.mdc-text-field--outlined:not(.mdc-text-field--focused):hover
+  .mdc-notched-outline__notch {
+  border-color: var(--brand-700);
+}
+
+/* Snackbar: warm dark, rounded */
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #17302E;
+  --mdc-snackbar-container-shape: 12px;
+  --mat-snack-bar-button-color: #9FC9C1;
+}
+
+/* Stepper header: cleaner, on surface */
+.mat-stepper-horizontal { background: transparent; }
+.mat-horizontal-stepper-header-container { margin-bottom: 4px; }
+
+/* Tables: hairlines that match the palette */
+.mat-mdc-table {
+  background: transparent;
+  --mat-table-row-item-outline-color: var(--line);
+}
+.mat-mdc-header-row {
+  --mat-table-header-container-height: 46px;
+  background: #FCFBF8;
+}
+.mat-mdc-header-cell {
+  color: var(--ink-faint);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.mat-mdc-row { --mat-table-row-item-container-height: 64px; }
+.mat-mdc-row:hover { background: #FCFBF8; }
+.mat-mdc-cell { color: var(--ink); border-bottom-color: var(--line); }
+
+/* Sidenav: seamless surface, no harsh divider shadow */
+.mat-drawer { background: var(--surface); }
+.mat-drawer-inner-container { display: flex; flex-direction: column; }
+.mat-sidenav-container { background: var(--paper); }
+
+/* Datepicker calendar */
+.mat-datepicker-content { border-radius: 16px; }
+
+/* ============================================================
+   Auth screens
+   ============================================================ */
+.auth-aside {
+  background:
+    radial-gradient(120% 90% at 85% 10%, rgba(95,162,151,.45) 0%, rgba(95,162,151,0) 55%),
+    radial-gradient(90% 70% at 10% 100%, rgba(22,62,57,.55) 0%, rgba(22,62,57,0) 60%),
+    linear-gradient(155deg, #2F6E66 0%, #1C4A44 60%, #163E39 100%);
+}
+.auth-aside::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+  opacity: .6;
+}
+
+.auth-submit {
+  height: 46px;
+  margin-top: 8px;
+  font-size: 0.95rem;
+}
+.inline-spinner { display: inline-block; }
+.inline-spinner circle { stroke: #fff; }
+
+/* ============================================================
+   Sidenav navigation
+   ============================================================ */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 11px;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  position: relative;
+  transition: background-color .15s, color .15s;
+}
+.nav-item:hover { background: var(--paper); color: var(--ink); }
+.nav-item .nav-icon { color: var(--ink-faint); transition: color .15s; }
+.nav-item:hover .nav-icon { color: var(--ink-soft); }
+
+.nav-item-active,
+.nav-item-active:hover {
+  background: var(--brand-50);
+  color: var(--brand-700);
+  font-weight: 600;
+}
+.nav-item-active .nav-icon {
+  color: var(--brand-700);
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+.nav-item-active::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  border-radius: 0 3px 3px 0;
+  background: var(--brand-700);
+}
+
+/* ============================================================
+   Page primitives
+   ============================================================ */
+.page { padding: 28px 36px; max-width: 1180px; }
+.page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.page-title { font-family: 'Fraunces', Georgia, serif; font-size: 1.6rem; font-weight: 500; color: var(--ink); line-height: 1.2; }
+.page-sub { font-size: 0.875rem; color: var(--ink-soft); margin-top: 2px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+}
+

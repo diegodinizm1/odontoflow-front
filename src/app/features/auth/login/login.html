@@ -1,21 +1,49 @@
-<div class="min-h-screen flex items-center justify-center px-4 bg-slate-100">
-  <div class="w-full max-w-md">
+<div class="min-h-screen grid lg:grid-cols-2 bg-paper">
 
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-700 mb-4 shadow-md">
-        <span class="material-icons text-white" style="font-size:32px">medical_services</span>
+  <!-- Brand panel -->
+  <aside class="auth-aside relative hidden lg:flex flex-col justify-between overflow-hidden text-white p-12">
+    <div class="relative z-10 flex items-center gap-3">
+      <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/15 backdrop-blur">
+        <span class="material-symbols-rounded" style="font-size:22px">dentistry</span>
       </div>
-      <h1 class="text-3xl font-bold text-slate-800">OdontoFlow</h1>
-      <p class="text-slate-500 mt-1">Acesse sua conta</p>
+      <span class="font-display text-xl font-semibold tracking-tight">OdontoFlow</span>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-      <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-4">
+    <div class="relative z-10 max-w-md">
+      <h2 class="font-display text-4xl leading-[1.15] font-medium">
+        O cuidado começa<br>com a organização.
+      </h2>
+      <p class="mt-5 text-white/70 text-[15px] leading-relaxed">
+        Agenda, prontuário e odontograma da sua clínica em um só lugar —
+        seguro, simples e feito para o dia a dia odontológico.
+      </p>
+    </div>
 
-        <mat-form-field appearance="outline" class="w-full">
+    <div class="relative z-10 flex items-center gap-2 text-white/50 text-xs">
+      <span class="material-symbols-rounded" style="font-size:16px">verified_user</span>
+      Conforme LGPD · Dados criptografados
+    </div>
+  </aside>
+
+  <!-- Form panel -->
+  <main class="flex items-center justify-center px-6 py-12">
+    <div class="w-full max-w-sm">
+
+      <div class="lg:hidden flex items-center gap-2.5 mb-10">
+        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-700 text-white">
+          <span class="material-symbols-rounded" style="font-size:22px">dentistry</span>
+        </div>
+        <span class="font-display text-xl font-semibold text-ink">OdontoFlow</span>
+      </div>
+
+      <h1 class="font-display text-[28px] font-medium text-ink">Bem-vindo de volta</h1>
+      <p class="text-ink-soft text-[15px] mt-1.5 mb-8">Acesse o painel da sua clínica.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col">
+
+        <mat-form-field appearance="outline">
           <mat-label>E-mail</mat-label>
-          <input matInput formControlName="email" type="email" autocomplete="email" />
-          <mat-icon matPrefix class="text-slate-400">email</mat-icon>
+          <input matInput formControlName="email" type="email" autocomplete="email" placeholder="voce@clinica.com" />
           @if (form.controls.email.hasError('required')) {
             <mat-error>E-mail é obrigatório</mat-error>
           } @else if (form.controls.email.hasError('email')) {
@@ -23,11 +51,12 @@
           }
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="w-full">
+        <mat-form-field appearance="outline">
           <mat-label>Senha</mat-label>
           <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'" autocomplete="current-password" />
-          <mat-icon matPrefix class="text-slate-400">lock</mat-icon>
-          <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())">
+          <button mat-icon-button matSuffix type="button" tabindex="-1"
+            (click)="hidePassword.set(!hidePassword())"
+            [attr.aria-label]="hidePassword() ? 'Mostrar senha' : 'Ocultar senha'">
             <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           @if (form.controls.password.hasError('required')) {
@@ -35,25 +64,22 @@
           }
         </mat-form-field>
 
-        <button
-          mat-flat-button
-          color="primary"
-          type="submit"
-          class="w-full h-11 text-base font-medium mt-2"
-          [disabled]="loading()">
+        <button mat-flat-button color="primary" type="submit" class="auth-submit" [disabled]="loading()">
           @if (loading()) {
-            <mat-spinner diameter="20" color="accent" class="inline-block mr-2" />
+            <mat-spinner diameter="20" class="inline-spinner" />
+          } @else {
+            Entrar
           }
-          Entrar
         </button>
 
       </form>
+
+      <p class="text-center text-ink-soft mt-8 text-sm">
+        Ainda não tem conta?
+        <a routerLink="/auth/register" class="text-brand-700 font-semibold hover:underline underline-offset-2">Cadastre sua clínica</a>
+      </p>
+
     </div>
+  </main>
 
-    <p class="text-center text-slate-500 mt-5 text-sm">
-      Nova clínica?
-      <a routerLink="/auth/register" class="text-primary-700 font-medium hover:underline">Cadastre-se aqui</a>
-    </p>
-
-  </div>
 </div>

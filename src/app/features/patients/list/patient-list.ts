@@ -1,12 +1,12 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Patient } from '../../../core/models/patient.model';
 import { PatientService } from '../../../core/services/patient.service';
@@ -15,7 +15,7 @@ import { PatientService } from '../../../core/services/patient.service';
   selector: 'app-patient-list',
   standalone: true,
   imports: [
-    RouterLink, DatePipe,
+    RouterLink, DatePipe, FormsModule,
     MatTableModule, MatButtonModule, MatIconModule,
     MatProgressSpinnerModule, MatTooltipModule,
   ],
@@ -24,12 +24,21 @@ import { PatientService } from '../../../core/services/patient.service';
 export class PatientListComponent implements OnInit {
   private patientService = inject(PatientService);
   private snackBar       = inject(MatSnackBar);
-  private dialog         = inject(MatDialog);
 
   readonly patients = signal<Patient[]>([]);
   readonly loading  = signal(true);
+  readonly search   = signal('');
 
-  readonly columns = ['fullName', 'dateOfBirth', 'medicalAlerts', 'actions'];
+  readonly filtered = computed(() => {
+    const term = this.search().trim().toLowerCase();
+    const list = this.patients();
+    if (!term) return list;
+    return list.filter(p =>
+      p.fullName.toLowerCase().includes(term) ||
+      (p.medicalAlerts?.toLowerCase().includes(term) ?? false));
+  });
+
+  readonly columns = ['patient', 'dateOfBirth', 'medicalAlerts', 'actions'];
 
   ngOnInit() { this.load(); }
 
@@ -50,5 +59,11 @@ export class PatientListComponent implements OnInit {
       },
       error: () => this.snackBar.open('Erro ao remover paciente.', 'Fechar', { duration: 3000 }),
     });
+  }
+
+  initials(name: string): string {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 }

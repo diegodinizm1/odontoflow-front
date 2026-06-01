@@ -1,64 +1,100 @@
-<div class="min-h-screen flex items-center justify-center px-4 py-10 bg-slate-100">
-  <div class="w-full max-w-lg">
+<div class="min-h-screen grid lg:grid-cols-2 bg-paper">
 
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-700 mb-4 shadow-md">
-        <span class="material-icons text-white" style="font-size:32px">medical_services</span>
+  <!-- Brand panel -->
+  <aside class="auth-aside relative hidden lg:flex flex-col justify-between overflow-hidden text-white p-12">
+    <div class="relative z-10 flex items-center gap-3">
+      <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/15 backdrop-blur">
+        <span class="material-symbols-rounded" style="font-size:22px">dentistry</span>
       </div>
-      <h1 class="text-3xl font-bold text-slate-800">OdontoFlow</h1>
-      <p class="text-slate-500 mt-1">Cadastre sua clínica</p>
+      <span class="font-display text-xl font-semibold tracking-tight">OdontoFlow</span>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+    <div class="relative z-10 max-w-md">
+      <h2 class="font-display text-4xl leading-[1.15] font-medium">
+        Comece em<br>poucos minutos.
+      </h2>
+      <p class="mt-5 text-white/70 text-[15px] leading-relaxed">
+        Crie a conta da clínica e você já entra como administrador.
+        Sem cartão de crédito, sem complicação.
+      </p>
+      <ul class="mt-8 space-y-3 text-white/80 text-sm">
+        <li class="flex items-center gap-3">
+          <span class="material-symbols-rounded text-white/60" style="font-size:20px">check_circle</span>
+          Prontuário e odontograma digitais
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="material-symbols-rounded text-white/60" style="font-size:20px">check_circle</span>
+          Agenda inteligente sem sobreposição
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="material-symbols-rounded text-white/60" style="font-size:20px">check_circle</span>
+          Controle financeiro por consulta
+        </li>
+      </ul>
+    </div>
+
+    <div class="relative z-10 flex items-center gap-2 text-white/50 text-xs">
+      <span class="material-symbols-rounded" style="font-size:16px">verified_user</span>
+      Conforme LGPD · Dados criptografados
+    </div>
+  </aside>
+
+  <!-- Form panel -->
+  <main class="flex items-center justify-center px-6 py-12">
+    <div class="w-full max-w-md">
+
+      <div class="lg:hidden flex items-center gap-2.5 mb-8">
+        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-700 text-white">
+          <span class="material-symbols-rounded" style="font-size:22px">dentistry</span>
+        </div>
+        <span class="font-display text-xl font-semibold text-ink">OdontoFlow</span>
+      </div>
+
+      <h1 class="font-display text-[28px] font-medium text-ink">Cadastre sua clínica</h1>
+      <p class="text-ink-soft text-[15px] mt-1.5 mb-7">Dois passos rápidos para começar.</p>
+
       <mat-stepper orientation="horizontal" linear #stepper>
 
         <mat-step [stepControl]="clinicForm" label="Clínica">
-          <form [formGroup]="clinicForm" class="flex flex-col gap-4 mt-6">
-
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>Nome da Clínica</mat-label>
-              <input matInput formControlName="clinicName" />
-              <mat-icon matPrefix class="text-slate-400">business</mat-icon>
+          <form [formGroup]="clinicForm" class="flex flex-col pt-6">
+            <mat-form-field appearance="outline">
+              <mat-label>Nome da clínica</mat-label>
+              <input matInput formControlName="clinicName" placeholder="Ex: Sorriso Vivo Odontologia" />
               @if (clinicForm.controls.clinicName.hasError('required')) {
                 <mat-error>Nome da clínica é obrigatório</mat-error>
               }
             </mat-form-field>
 
-            <mat-form-field appearance="outline" class="w-full">
+            <mat-form-field appearance="outline">
               <mat-label>CNPJ / CPF</mat-label>
               <input matInput formControlName="document" placeholder="00.000.000/0001-00" />
-              <mat-icon matPrefix class="text-slate-400">badge</mat-icon>
               @if (clinicForm.controls.document.hasError('required')) {
                 <mat-error>Documento é obrigatório</mat-error>
               }
             </mat-form-field>
 
-            <div class="flex justify-end mt-2">
-              <button mat-flat-button color="primary" matStepperNext type="button"
-                [disabled]="clinicForm.invalid" class="h-10 px-6">
-                Próximo <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+            <div class="flex justify-end pt-1">
+              <button mat-flat-button color="primary" matStepperNext type="button" [disabled]="clinicForm.invalid">
+                Continuar
+                <mat-icon iconPositionEnd>arrow_forward</mat-icon>
               </button>
             </div>
-
           </form>
         </mat-step>
 
         <mat-step [stepControl]="userForm" label="Responsável">
-          <form [formGroup]="userForm" class="flex flex-col gap-4 mt-6">
-
-            <mat-form-field appearance="outline" class="w-full">
+          <form [formGroup]="userForm" class="flex flex-col pt-6">
+            <mat-form-field appearance="outline">
               <mat-label>Nome completo</mat-label>
-              <input matInput formControlName="fullName" />
-              <mat-icon matPrefix class="text-slate-400">person</mat-icon>
+              <input matInput formControlName="fullName" placeholder="Dr(a). Nome Sobrenome" />
               @if (userForm.controls.fullName.hasError('required')) {
                 <mat-error>Nome completo é obrigatório</mat-error>
               }
             </mat-form-field>
 
-            <mat-form-field appearance="outline" class="w-full">
+            <mat-form-field appearance="outline">
               <mat-label>E-mail</mat-label>
-              <input matInput formControlName="email" type="email" autocomplete="email" />
-              <mat-icon matPrefix class="text-slate-400">email</mat-icon>
+              <input matInput formControlName="email" type="email" autocomplete="email" placeholder="voce@clinica.com" />
               @if (userForm.controls.email.hasError('required')) {
                 <mat-error>E-mail é obrigatório</mat-error>
               } @else if (userForm.controls.email.hasError('email')) {
@@ -66,13 +102,13 @@
               }
             </mat-form-field>
 
-            <mat-form-field appearance="outline" class="w-full">
+            <mat-form-field appearance="outline">
               <mat-label>Senha</mat-label>
               <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'" autocomplete="new-password" />
-              <mat-icon matPrefix class="text-slate-400">lock</mat-icon>
-              <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())">
+              <button mat-icon-button matSuffix type="button" tabindex="-1" (click)="hidePassword.set(!hidePassword())">
                 <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
+              <mat-hint>Mínimo de 8 caracteres</mat-hint>
               @if (userForm.controls.password.hasError('required')) {
                 <mat-error>Senha é obrigatória</mat-error>
               } @else if (userForm.controls.password.hasError('minlength')) {
@@ -80,27 +116,30 @@
               }
             </mat-form-field>
 
-            <div class="flex justify-between mt-2">
-              <button mat-stroked-button matStepperPrevious type="button" class="h-10 px-5">
-                <mat-icon>arrow_back</mat-icon> Voltar
+            <div class="flex justify-between pt-3">
+              <button mat-stroked-button matStepperPrevious type="button">
+                <mat-icon>arrow_back</mat-icon>
+                Voltar
               </button>
-              <button mat-flat-button color="primary" type="button" (click)="submit()"
-                [disabled]="userForm.invalid || loading()" class="h-10 px-6">
-                @if (loading()) { <mat-spinner diameter="18" color="accent" class="inline-block mr-2" /> }
-                Cadastrar
+              <button mat-flat-button color="primary" type="button" (click)="submit()" [disabled]="userForm.invalid || loading()">
+                @if (loading()) {
+                  <mat-spinner diameter="18" class="inline-spinner" />
+                } @else {
+                  Criar conta
+                }
               </button>
             </div>
-
           </form>
         </mat-step>
 
       </mat-stepper>
+
+      <p class="text-center text-ink-soft mt-6 text-sm">
+        Já tem uma conta?
+        <a routerLink="/auth/login" class="text-brand-700 font-semibold hover:underline underline-offset-2">Fazer login</a>
+      </p>
+
     </div>
+  </main>
 
-    <p class="text-center text-slate-500 mt-5 text-sm">
-      Já tem uma conta?
-      <a routerLink="/auth/login" class="text-primary-700 font-medium hover:underline">Fazer login</a>
-    </p>
-
-  </div>
 </div>
