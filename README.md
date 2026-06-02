@@ -125,6 +125,19 @@ docker run -p 4200:80 odontoflow-web   # → http://localhost:4200
 
 The production build uses `src/environments/environment.prod.ts` (`apiUrl: '/api'`); nginx proxies `/api` to the backend (defaults to the Docker host on port 8080 — see `nginx.conf`).
 
+### Tests
+
+```bash
+npm test          # unit tests (Angular + Vitest) in watch mode
+npm run test:ci   # unit tests, single run (used in CI)
+npm run e2e       # end-to-end tests (Playwright) — needs the backend running
+```
+
+- **Unit** (`@angular/build:unit-test` + Vitest): pure logic and services (e.g. JWT decoding, datetime utilities).
+- **E2E** (Playwright, `e2e/`): real user flows — registration → onboarding, dashboard, patient creation, auth guard. The config auto-starts the dev server.
+
+CI (GitHub Actions) builds the app and runs the unit tests on every push/PR to `main`.
+
 ## License
 
 MIT — built as a portfolio project.
