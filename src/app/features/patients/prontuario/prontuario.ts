@@ -1,29 +1,34 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { Patient } from '../../../core/models/patient.model';
 import { ClinicalRecord, Odontogram } from '../../../core/models/odontogram.model';
 import { PatientFile } from '../../../core/models/patient-file.model';
+import { TreatmentPlan, TreatmentItem, TreatmentPlanStatus } from '../../../core/models/treatment.model';
 import { ApiError } from '../../../core/models/api-error.model';
 import { PatientService } from '../../../core/services/patient.service';
 import { ClinicalRecordService } from '../../../core/services/clinical-record.service';
 import { PatientFileService } from '../../../core/services/patient-file.service';
+import { TreatmentService } from '../../../core/services/treatment.service';
 import { OdontogramComponent } from './odontogram';
+import { TreatmentPlanDialogComponent } from './treatment-plan-dialog';
 
 @Component({
   selector: 'app-prontuario',
   standalone: true,
   imports: [
-    DatePipe, FormsModule, RouterLink, OdontogramComponent,
-    MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule,
+    CurrencyPipe, DatePipe, FormsModule, RouterLink, OdontogramComponent,
+    MatButtonModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatTooltipModule,
   ],
   templateUrl: './prontuario.html',
 })
@@ -32,6 +37,8 @@ export class ProntuarioComponent implements OnInit {
   private patients = inject(PatientService);
   private records  = inject(ClinicalRecordService);
   private files    = inject(PatientFileService);
+  private treatments = inject(TreatmentService);
+  private dialog   = inject(MatDialog);
   private snackBar  = inject(MatSnackBar);
 
   private patientId = '';
@@ -42,6 +49,7 @@ export class ProntuarioComponent implements OnInit {
   readonly patient  = signal<Patient | null>(null);
   readonly history  = signal<ClinicalRecord[]>([]);
   readonly fileList = signal<PatientFile[]>([]);
+  readonly plans    = signal<TreatmentPlan[]>([]);
 
   // in-memory odontogram state (NFR04) — single payload on save
   readonly odontogram = signal<Odontogram>({});
@@ -55,6 +63,7 @@ export class ProntuarioComponent implements OnInit {
     });
     this.loadHistory(true);
     this.loadFiles();
+    this.loadPlans();
   }
 
   private loadHistory(initOdontogram = false) {
@@ -144,5 +153,40 @@ export class ProntuarioComponent implements OnInit {
       },
       error: () => this.snackBar.open('Erro ao remover arquivo.', 'Fechar', { duration: 3000 }),
     });
+  }
+
+  /* ---- Treatment plans ---- */
+  private loadPlans() {
+    this.treatments.list(this.patientId).subscribe({
+      next: list => this.plans.set(list),
+      error: () => {},
+    });
+  }
+
+  openCreatePlan() {
+    this.dialog.open(TreatmentPlanDialogComponent, { width: '600px', autoFocus: false, data: { patientId: this.patientId } })
+      .afterClosed().subscribe(changed => { if (changed) this.loadPlans(); });
+  }
+
+  setPlanStatus(plan: TreatmentPlan, status: TreatmentPlanStatus) {
+    this.treatments.updateStatus(this.patientId, plan.id, status).subscribe({
+      next: () => this.loadPlans(),
+      error: () => this.snackBar.open('Erro ao atualizar o plano.', 'Fechar', { duration: 3000 }),
+    });
+  }
+
+  completeItem(plan: TreatmentPlan, item: TreatmentItem) {
+    if (item.status === 'DONE') return;
+    this.treatments.completeItem(this.patientId, plan.id, item.id).subscribe({
+      next: () => {
+        this.snackBar.open('Procedimento concluído — cobrança gerada no Financeiro.', '', { duration: 3500 });
+        this.loadPlans();
+      },
+      error: () => this.snackBar.open('Erro ao concluir o procedimento.', 'Fechar', { duration: 3000 }),
+    });
+  }
+
+  planStatusLabel(s: TreatmentPlanStatus): string {
+    return { PROPOSED: 'Proposto', ACCEPTED: 'Aceito', COMPLETED: 'Concluído', CANCELED: 'Cancelado' }[s];
   }
 }

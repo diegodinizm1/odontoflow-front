@@ -1,0 +1,58 @@
+<div class="appt-dialog" style="min-width: 520px;">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="font-display text-xl text-ink m-0">Novo plano de tratamento</h2>
+    <button mat-icon-button (click)="close()" tabindex="-1">
+      <mat-icon class="text-ink-faint">close</mat-icon>
+    </button>
+  </div>
+
+  <form [formGroup]="form" class="flex flex-col">
+    <mat-form-field appearance="outline">
+      <mat-label>Título do plano</mat-label>
+      <input matInput formControlName="title" placeholder="Ex: Reabilitação oral" />
+      @if (form.controls.title.hasError('required')) { <mat-error>Título é obrigatório</mat-error> }
+    </mat-form-field>
+
+    <p class="text-[11px] font-bold text-ink-faint uppercase tracking-[0.1em] mb-2">Procedimentos</p>
+
+    <div formArrayName="items" class="flex flex-col gap-2">
+      @for (item of items.controls; track $index) {
+        <div [formGroupName]="$index" class="flex items-start gap-2">
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Procedimento</mat-label>
+            <input matInput formControlName="description" placeholder="Ex: Canal" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" style="width: 80px;">
+            <mat-label>Dente</mat-label>
+            <input matInput formControlName="tooth" maxlength="3" inputmode="numeric" placeholder="36" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" style="width: 130px;">
+            <mat-label>Valor (R$)</mat-label>
+            <input matInput type="number" formControlName="amount" min="0" step="0.01"
+                   (input)="recomputeTotal()" placeholder="0,00" />
+          </mat-form-field>
+          <button mat-icon-button type="button" class="mt-2" (click)="removeItem($index)"
+                  [disabled]="items.length === 1" matTooltip="Remover">
+            <mat-icon class="text-ink-faint">delete</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+
+    <button mat-stroked-button type="button" class="self-start mt-1" (click)="addItem()">
+      <mat-icon>add</mat-icon> Adicionar procedimento
+    </button>
+
+    <div class="flex items-center justify-between mt-5 pt-3 border-t border-line">
+      <span class="text-sm text-ink-soft">Total estimado</span>
+      <span class="font-display text-xl text-ink">{{ total() | currency:'BRL' }}</span>
+    </div>
+
+    <div class="flex justify-end gap-2 mt-4">
+      <button mat-stroked-button type="button" (click)="close()">Cancelar</button>
+      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="form.invalid || loading()">
+        @if (loading()) { <mat-spinner diameter="18" class="inline-spinner" /> } @else { Criar plano }
+      </button>
+    </div>
+  </form>
+</div>

@@ -90,6 +90,74 @@
       </div>
     </section>
 
+    <!-- Treatment plans -->
+    <section class="card p-7 mb-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-display text-lg text-ink">Plano de tratamento</h2>
+          <p class="text-sm text-ink-soft">{{ plans().length }} plano(s)</p>
+        </div>
+        <button mat-flat-button color="primary" (click)="openCreatePlan()">
+          <mat-icon>add</mat-icon> Novo plano
+        </button>
+      </div>
+
+      @if (plans().length === 0) {
+        <p class="text-sm text-ink-soft py-6 text-center">Nenhum plano de tratamento ainda.</p>
+      } @else {
+        <div class="flex flex-col gap-4">
+          @for (plan of plans(); track plan.id) {
+            <div class="rounded-xl border border-line overflow-hidden">
+              <div class="flex items-center justify-between gap-3 px-4 py-3 bg-paper">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="font-semibold text-ink truncate">{{ plan.title }}</span>
+                    <span class="charge-pill"
+                          [class]="plan.status === 'COMPLETED' ? 'charge-paid' : plan.status === 'CANCELED' ? 'charge-canceled' : 'charge-pending'">
+                      {{ planStatusLabel(plan.status) }}
+                    </span>
+                  </div>
+                  <p class="text-xs text-ink-faint mt-0.5">{{ plan.createdByName }} · {{ plan.createdAt | date:'dd/MM/yyyy' }}</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <span class="font-display text-lg text-ink">{{ plan.total | currency:'BRL' }}</span>
+                  @if (plan.status !== 'COMPLETED' && plan.status !== 'CANCELED') {
+                    <button mat-icon-button [matMenuTriggerFor]="planMenu"><mat-icon class="text-ink-faint">more_vert</mat-icon></button>
+                    <mat-menu #planMenu="matMenu">
+                      @if (plan.status === 'PROPOSED') {
+                        <button mat-menu-item (click)="setPlanStatus(plan, 'ACCEPTED')"><mat-icon>check_circle</mat-icon><span>Marcar como aceito</span></button>
+                      }
+                      <button mat-menu-item (click)="setPlanStatus(plan, 'CANCELED')"><mat-icon>cancel</mat-icon><span>Cancelar plano</span></button>
+                    </mat-menu>
+                  }
+                </div>
+              </div>
+
+              <ul class="divide-y divide-line">
+                @for (item of plan.items; track item.id) {
+                  <li class="flex items-center gap-3 px-4 py-2.5">
+                    <span class="material-symbols-rounded shrink-0"
+                          [class]="item.status === 'DONE' ? 'text-brand-600' : 'text-ink-faint'"
+                          style="font-size:20px">{{ item.status === 'DONE' ? 'task_alt' : 'radio_button_unchecked' }}</span>
+                    <div class="flex-1 min-w-0">
+                      <span class="text-sm text-ink" [class.line-through]="item.status === 'DONE'">{{ item.description }}</span>
+                      @if (item.tooth) { <span class="text-xs text-ink-faint ml-1">· dente {{ item.tooth }}</span> }
+                    </div>
+                    <span class="text-sm font-medium text-ink shrink-0">{{ item.amount | currency:'BRL' }}</span>
+                    @if (item.status === 'PENDING' && plan.status !== 'CANCELED') {
+                      <button mat-stroked-button class="shrink-0" (click)="completeItem(plan, item)">Concluir</button>
+                    } @else if (item.status === 'DONE') {
+                      <span class="charge-pill charge-paid shrink-0">Concluído</span>
+                    }
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
     <!-- New evolution -->
     <section class="card p-7 mb-6">
       <h2 class="font-display text-lg text-ink mb-1">Nova evolução</h2>
