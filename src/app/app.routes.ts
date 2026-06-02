@@ -3,7 +3,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { ShellComponent } from './features/shell/shell';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'agenda', pathMatch: 'full' },
+  { path: '', redirectTo: 'inicio', pathMatch: 'full' },
   {
     path: 'auth',
     children: [
@@ -16,6 +16,7 @@ export const routes: Routes = [
     component: ShellComponent,
     canActivate: [authGuard],
     children: [
+      { path: 'inicio',            loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent) },
       { path: 'agenda',            loadComponent: () => import('./features/agenda/agenda').then(m => m.AgendaComponent) },
       { path: 'patients',          loadComponent: () => import('./features/patients/list/patient-list').then(m => m.PatientListComponent) },
       { path: 'patients/new',      loadComponent: () => import('./features/patients/form/patient-form').then(m => m.PatientFormComponent) },

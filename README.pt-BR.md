@@ -20,29 +20,30 @@ O frontend do **OdontoFlow**, uma plataforma B2B para clínicas odontológicas. 
 
 ## Telas
 
-| Login | Agenda semanal (arrastar e soltar) |
-|-------|------------------------------------|
-| ![Login](docs/screenshots/login.png) | ![Agenda](docs/screenshots/agenda.png) |
+| Dashboard | Login |
+|-----------|-------|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Login](docs/screenshots/login.png) |
 
-| Odontograma interativo | Prontuário |
-|------------------------|------------|
-| ![Odontograma](docs/screenshots/odontogram.png) | ![Prontuário](docs/screenshots/prontuario.png) |
+| Agenda semanal (arrastar e soltar) | Odontograma interativo |
+|------------------------------------|------------------------|
+| ![Agenda](docs/screenshots/agenda.png) | ![Odontograma](docs/screenshots/odontogram.png) |
 
-| Planos de assinatura | Onboarding |
-|----------------------|------------|
-| ![Assinatura](docs/screenshots/billing.png) | ![Onboarding](docs/screenshots/onboarding.png) |
+| Prontuário | Planos de assinatura |
+|------------|----------------------|
+| ![Prontuário](docs/screenshots/prontuario.png) | ![Assinatura](docs/screenshots/billing.png) |
 
 <details>
-<summary>Mais — financeiro &amp; equipe</summary>
+<summary>Mais — onboarding, financeiro &amp; equipe</summary>
 
-| Financeiro | Equipe |
-|------------|--------|
-| ![Financeiro](docs/screenshots/financial.png) | ![Equipe](docs/screenshots/team.png) |
+| Onboarding | Financeiro | Equipe |
+|------------|------------|--------|
+| ![Onboarding](docs/screenshots/onboarding.png) | ![Financeiro](docs/screenshots/financial.png) | ![Equipe](docs/screenshots/team.png) |
 
 </details>
 
 ## Funcionalidades
 
+- 📊 **Dashboard** — visão geral inicial com cards de KPI (pacientes, consultas de hoje, faturamento do mês, pendente) e a agenda do dia.
 - 🔐 **Autenticação & onboarding** — login e cadastro da clínica em duas etapas, seguidos de um checklist guiado de configuração.
 - 📅 **Agenda** — calendário semanal com blocos de consulta que você pode **arrastar e soltar para reagendar** (com checagem de sobreposição no servidor), criar e cancelar.
 - 🦷 **Odontograma interativo** — dentes desenhados anatomicamente (SVG), clique para alternar o status do dente, legenda ao vivo; estado em memória salvo em um único payload.

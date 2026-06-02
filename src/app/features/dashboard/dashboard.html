@@ -1,0 +1,77 @@
+<div class="page">
+
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Início</h1>
+      <p class="page-sub">{{ today | date:'EEEE, dd MMM y' }}</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <a mat-stroked-button routerLink="/patients/new">
+        <mat-icon>person_add</mat-icon> Paciente
+      </a>
+      <a mat-flat-button color="primary" routerLink="/agenda">
+        <mat-icon>add</mat-icon> Agendar
+      </a>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="flex justify-center py-24"><mat-spinner diameter="38" /></div>
+  } @else if (data(); as d) {
+
+    <!-- KPI cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="card p-5">
+        <div class="kpi-icon bg-brand-50 text-brand-700"><span class="material-symbols-rounded">groups</span></div>
+        <p class="kpi-value">{{ d.patientsCount }}</p>
+        <p class="kpi-label">Pacientes</p>
+      </div>
+      <div class="card p-5">
+        <div class="kpi-icon bg-brand-50 text-brand-700"><span class="material-symbols-rounded">event</span></div>
+        <p class="kpi-value">{{ d.appointmentsToday }}</p>
+        <p class="kpi-label">Consultas hoje</p>
+      </div>
+      <div class="card p-5">
+        <div class="kpi-icon bg-emerald-50 text-emerald-700"><span class="material-symbols-rounded">payments</span></div>
+        <p class="kpi-value">{{ d.paidThisMonth | currency:'BRL' }}</p>
+        <p class="kpi-label">Recebido no mês</p>
+      </div>
+      <div class="card p-5">
+        <div class="kpi-icon bg-alert-bg text-alert-fg"><span class="material-symbols-rounded">schedule</span></div>
+        <p class="kpi-value">{{ d.pendingTotal | currency:'BRL' }}</p>
+        <p class="kpi-label">Pendente</p>
+      </div>
+    </div>
+
+    <!-- Today's agenda -->
+    <section class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-display text-lg text-ink">Agenda de hoje</h2>
+        <a routerLink="/agenda" class="text-sm font-semibold text-brand-700 hover:underline">Ver agenda</a>
+      </div>
+
+      @if (d.todayAppointments.length === 0) {
+        <div class="flex flex-col items-center justify-center text-center py-10 text-ink-soft">
+          <span class="material-symbols-rounded text-ink-faint mb-2" style="font-size:34px">event_available</span>
+          <p class="text-sm">Nenhuma consulta agendada para hoje.</p>
+        </div>
+      } @else {
+        <ul class="divide-y divide-line">
+          @for (a of d.todayAppointments; track a.id) {
+            <li class="flex items-center gap-4 py-3">
+              <span class="text-sm font-semibold text-ink tabular-nums w-24 shrink-0">
+                {{ time(a.startTime) }}–{{ time(a.endTime) }}
+              </span>
+              <span class="flex-1 min-w-0 font-medium text-ink truncate">{{ a.patientName }}</span>
+              <span class="charge-pill" [class]="a.status === 'COMPLETED' ? 'charge-paid' : 'charge-pending'">
+                {{ statusLabel(a) }}
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+  }
+
+</div>

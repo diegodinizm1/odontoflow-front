@@ -25,6 +25,7 @@ export class ShellComponent {
   auth = inject(AuthService);
 
   readonly navItems: NavItem[] = [
+    { label: 'Início',     icon: 'dashboard',         route: '/inicio' },
     { label: 'Agenda',     icon: 'calendar_month',    route: '/agenda' },
     { label: 'Pacientes',  icon: 'groups',            route: '/patients' },
     { label: 'Financeiro', icon: 'payments',          route: '/financeiro' },

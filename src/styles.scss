@@ -550,3 +550,14 @@ $agenda-gutter: 64px;
 .sub-trialing  { background: var(--brand-50); color: var(--brand-700); }
 .sub-past_due  { background: var(--alert-bg); color: var(--alert-fg); }
 .sub-canceled  { background: #F1F1EE; color: var(--ink-faint); }
+
+/* ============================================================
+   Dashboard KPI cards
+   ============================================================ */
+.kpi-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 11px; margin-bottom: 12px;
+}
+.kpi-icon .material-symbols-rounded { font-size: 22px; }
+.kpi-value { font-family: 'Fraunces', Georgia, serif; font-size: 1.6rem; color: var(--ink); line-height: 1.1; }
+.kpi-label { font-size: 0.8rem; color: var(--ink-soft); margin-top: 2px; }

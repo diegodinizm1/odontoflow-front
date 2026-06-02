@@ -20,29 +20,30 @@ The frontend for **OdontoFlow**, a B2B platform for dental clinics. It pairs wit
 
 ## Screenshots
 
-| Login | Weekly agenda (drag & drop) |
-|-------|------------------------------|
-| ![Login](docs/screenshots/login.png) | ![Agenda](docs/screenshots/agenda.png) |
+| Dashboard | Login |
+|-----------|-------|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Login](docs/screenshots/login.png) |
 
-| Interactive odontogram | Patient record |
-|------------------------|----------------|
-| ![Odontogram](docs/screenshots/odontogram.png) | ![Record](docs/screenshots/prontuario.png) |
+| Weekly agenda (drag & drop) | Interactive odontogram |
+|------------------------------|------------------------|
+| ![Agenda](docs/screenshots/agenda.png) | ![Odontogram](docs/screenshots/odontogram.png) |
 
-| Subscription plans | Onboarding |
-|--------------------|------------|
-| ![Billing](docs/screenshots/billing.png) | ![Onboarding](docs/screenshots/onboarding.png) |
+| Patient record | Subscription plans |
+|----------------|--------------------|
+| ![Record](docs/screenshots/prontuario.png) | ![Billing](docs/screenshots/billing.png) |
 
 <details>
-<summary>More — finances &amp; team</summary>
+<summary>More — onboarding, finances &amp; team</summary>
 
-| Finances | Team |
-|----------|------|
-| ![Finances](docs/screenshots/financial.png) | ![Team](docs/screenshots/team.png) |
+| Onboarding | Finances | Team |
+|------------|----------|------|
+| ![Onboarding](docs/screenshots/onboarding.png) | ![Finances](docs/screenshots/financial.png) | ![Team](docs/screenshots/team.png) |
 
 </details>
 
 ## Features
 
+- 📊 **Dashboard** — landing overview with KPI cards (patients, today's appointments, monthly revenue, pending) and today's agenda.
 - 🔐 **Auth & onboarding** — login and a two-step clinic registration stepper, followed by a guided setup checklist.
 - 📅 **Agenda** — weekly calendar with appointment blocks you can **drag & drop to reschedule** (with server-side overlap checks), create and cancel.
 - 🦷 **Interactive odontogram** — anatomically drawn teeth (SVG), click-to-cycle tooth status, live legend; in-memory state saved as a single payload.
