@@ -111,8 +111,19 @@ The API base URL is configured in `src/environments/environment.ts` (`http://loc
 ### Build
 
 ```bash
-npm run build      # production build into dist/
+npm run build      # production build into dist/odontoflow-frontend/browser
 ```
+
+### Run with Docker
+
+A multi-stage build compiles the app and serves it with nginx (SPA fallback + `/api` reverse-proxy to the backend):
+
+```bash
+docker build -t odontoflow-web .
+docker run -p 4200:80 odontoflow-web   # → http://localhost:4200
+```
+
+The production build uses `src/environments/environment.prod.ts` (`apiUrl: '/api'`); nginx proxies `/api` to the backend (defaults to the Docker host on port 8080 — see `nginx.conf`).
 
 ## License
 
