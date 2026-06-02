@@ -26,5 +26,13 @@ jobs:
       - name: Production build
         run: npm run build
 
-      - name: Unit tests (Vitest)
+      - name: Unit tests + coverage (Vitest)
         run: npm run test:ci
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: coverage/
+          retention-days: 7

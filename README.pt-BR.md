@@ -8,6 +8,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Angular Material](https://img.shields.io/badge/Angular%20Material-M2-757575?logo=angular&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
+![Testes](https://img.shields.io/badge/testes-unit%20%2B%20e2e-success)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)
 
 > ℹ️ **Projeto de portfólio.** Os textos da interface estão em pt-BR (produto brasileiro); o código, comentários e commits estão em inglês.
@@ -133,10 +134,10 @@ npm run test:ci   # testes unitários, execução única (usado na CI)
 npm run e2e       # testes ponta a ponta (Playwright) — requer o backend rodando
 ```
 
-- **Unitários** (`@angular/build:unit-test` + Vitest): lógica pura e serviços (ex.: decodificação de JWT, utilitários de data/hora).
+- **Unitários** (`@angular/build:unit-test` + Vitest): lógica pura e serviços (ex.: decodificação de JWT, utilitários de data/hora) — ~98% de cobertura de linhas do core testado (`--coverage` gera o relatório em `coverage/`).
 - **E2E** (Playwright, `e2e/`): fluxos reais — cadastro → onboarding, dashboard, criação de paciente, guarda de autenticação. A config sobe o dev server automaticamente.
 
-A CI (GitHub Actions) builda o app e roda os testes unitários a cada push/PR para `main`.
+A CI (GitHub Actions) builda o app e roda os testes unitários com cobertura a cada push/PR para `main`.
 
 ## Licença
 

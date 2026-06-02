@@ -8,6 +8,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Angular Material](https://img.shields.io/badge/Angular%20Material-M2-757575?logo=angular&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-unit%20%2B%20e2e-success)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 > ℹ️ **Portfolio project.** UI copy is in pt-BR (Brazilian product); the codebase, comments and commits are in English.
@@ -133,10 +134,10 @@ npm run test:ci   # unit tests, single run (used in CI)
 npm run e2e       # end-to-end tests (Playwright) — needs the backend running
 ```
 
-- **Unit** (`@angular/build:unit-test` + Vitest): pure logic and services (e.g. JWT decoding, datetime utilities).
+- **Unit** (`@angular/build:unit-test` + Vitest): pure logic and services (e.g. JWT decoding, datetime utilities) — ~98% line coverage of the tested core (`--coverage` writes a report to `coverage/`).
 - **E2E** (Playwright, `e2e/`): real user flows — registration → onboarding, dashboard, patient creation, auth guard. The config auto-starts the dev server.
 
-CI (GitHub Actions) builds the app and runs the unit tests on every push/PR to `main`.
+CI (GitHub Actions) builds the app and runs the unit tests with coverage on every push/PR to `main`.
 
 ## License
 
