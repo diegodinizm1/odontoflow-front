@@ -27,6 +27,11 @@
         </div>
 
         <mat-form-field appearance="outline">
+          <mat-label>Celular</mat-label>
+          <input matInput formControlName="phone" placeholder="(00) 00000-0000" appMask="phone" inputmode="numeric" maxlength="15" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
           <mat-label>Data de nascimento</mat-label>
           <input matInput [matDatepicker]="picker" formControlName="dateOfBirth" />
           <mat-datepicker-toggle matIconSuffix [for]="picker" />

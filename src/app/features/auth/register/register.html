@@ -67,7 +67,7 @@
 
             <mat-form-field appearance="outline">
               <mat-label>CNPJ / CPF</mat-label>
-              <input matInput formControlName="document" placeholder="00.000.000/0001-00" />
+              <input matInput formControlName="document" placeholder="00.000.000/0001-00" appMask="cpfCnpj" inputmode="numeric" maxlength="18" />
               @if (clinicForm.controls.document.hasError('required')) {
                 <mat-error>Documento é obrigatório</mat-error>
               }

@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PatientService } from '../../../core/services/patient.service';
 import { ApiError } from '../../../core/models/api-error.model';
+import { MaskDirective } from '../../../core/directives/mask.directive';
 
 @Component({
   selector: 'app-patient-form',
@@ -17,7 +18,7 @@ import { ApiError } from '../../../core/models/api-error.model';
   imports: [
     ReactiveFormsModule, RouterLink,
     MatInputModule, MatButtonModule, MatIconModule,
-    MatDatepickerModule, MatProgressSpinnerModule,
+    MatDatepickerModule, MatProgressSpinnerModule, MaskDirective,
   ],
   templateUrl: './patient-form.html',
 })
@@ -34,6 +35,7 @@ export class PatientFormComponent implements OnInit {
 
   form = this.fb.nonNullable.group({
     fullName:      ['', Validators.required],
+    phone:         [''],
     dateOfBirth:   [null as Date | null],
     medicalAlerts: [''],
   });
@@ -46,6 +48,7 @@ export class PatientFormComponent implements OnInit {
       this.patientService.getById(id).subscribe({
         next: p => this.form.patchValue({
           fullName:      p.fullName,
+          phone:         p.phone ?? '',
           dateOfBirth:   p.dateOfBirth ? new Date(p.dateOfBirth) : null,
           medicalAlerts: p.medicalAlerts ?? '',
         }),
@@ -61,6 +64,7 @@ export class PatientFormComponent implements OnInit {
     const raw = this.form.getRawValue();
     const payload = {
       fullName:      raw.fullName,
+      phone:         raw.phone || null,
       dateOfBirth:   raw.dateOfBirth ? raw.dateOfBirth.toISOString().split('T')[0] : null,
       medicalAlerts: raw.medicalAlerts || null,
     };

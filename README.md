@@ -48,7 +48,7 @@ The frontend for **OdontoFlow**, a B2B platform for dental clinics. It pairs wit
 - 🔐 **Auth & onboarding** — login and a two-step clinic registration stepper, followed by a guided setup checklist.
 - 📅 **Agenda** — weekly calendar with appointment blocks you can **drag & drop to reschedule** (with server-side overlap checks), create and cancel.
 - 🦷 **Interactive odontogram** — anatomically drawn teeth (SVG), click-to-cycle tooth status, live legend; in-memory state saved as a single payload.
-- 👥 **Patients** — searchable list, create/edit form, full clinical record (odontogram + evolution timeline + radiographs).
+- 👥 **Patients** — searchable list, create/edit form (with Brazilian input masks for CPF/CNPJ and phone), full clinical record (odontogram + evolution timeline + radiographs).
 - 🖼️ **Radiographs** — direct browser upload to object storage via **pre-signed URLs**.
 - 💰 **Finances** — charges with status pills and monthly revenue summary.
 - 💳 **Billing** — Free / Essencial / Pro plan cards, current subscription and invoices.

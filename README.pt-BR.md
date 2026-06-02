@@ -48,7 +48,7 @@ O frontend do **OdontoFlow**, uma plataforma B2B para clínicas odontológicas. 
 - 🔐 **Autenticação & onboarding** — login e cadastro da clínica em duas etapas, seguidos de um checklist guiado de configuração.
 - 📅 **Agenda** — calendário semanal com blocos de consulta que você pode **arrastar e soltar para reagendar** (com checagem de sobreposição no servidor), criar e cancelar.
 - 🦷 **Odontograma interativo** — dentes desenhados anatomicamente (SVG), clique para alternar o status do dente, legenda ao vivo; estado em memória salvo em um único payload.
-- 👥 **Pacientes** — lista com busca, formulário de cadastro/edição, prontuário completo (odontograma + linha do tempo de evoluções + radiografias).
+- 👥 **Pacientes** — lista com busca, formulário de cadastro/edição (com máscaras de CPF/CNPJ e telefone), prontuário completo (odontograma + linha do tempo de evoluções + radiografias).
 - 🖼️ **Radiografias** — upload direto do navegador para o armazenamento de objetos via **Pre-Signed URLs**.
 - 💰 **Financeiro** — cobranças com pills de status e resumo mensal de faturamento.
 - 💳 **Assinatura** — cards dos planos Grátis / Essencial / Pro, assinatura atual e faturas.

@@ -10,6 +10,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 import { ApiError } from '../../../core/models/api-error.model';
+import { MaskDirective } from '../../../core/directives/mask.directive';
 
 @Component({
   selector: 'app-register',
@@ -23,6 +24,7 @@ import { ApiError } from '../../../core/models/api-error.model';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatStepperModule,
+    MaskDirective,
   ],
   templateUrl: './register.html',
 })
