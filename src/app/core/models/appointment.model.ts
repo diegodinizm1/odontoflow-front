@@ -12,6 +12,7 @@ export interface Appointment {
 
 export interface CreateAppointmentRequest {
   patientId: string;
+  dentistId?: string | null;
   startTime: string;
   endTime: string;
 }

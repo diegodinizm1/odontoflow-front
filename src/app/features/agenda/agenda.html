@@ -8,6 +8,18 @@
       </p>
     </div>
     <div class="flex items-center gap-2">
+      @if (isReceptionist()) {
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-52">
+          <mat-label>Dentista</mat-label>
+          <mat-select [value]="selectedDentistId()"
+                      (selectionChange)="onDentistFilterChange($event.value)">
+            <mat-option [value]="null">Todos os dentistas</mat-option>
+            @for (d of dentists(); track d.id) {
+              <mat-option [value]="d.id">{{ d.fullName }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
       <div class="flex items-center rounded-xl border border-line bg-surface overflow-hidden">
         <button mat-icon-button (click)="prevWeek()" matTooltip="Semana anterior">
           <mat-icon class="text-ink-soft">chevron_left</mat-icon>

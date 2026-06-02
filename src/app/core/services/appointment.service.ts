@@ -11,8 +11,9 @@ export class AppointmentService {
   private http = inject(HttpClient);
   private base = `${environment.apiUrl}/appointments`;
 
-  list(start: string, end: string) {
-    const params = new HttpParams().set('start', start).set('end', end);
+  list(start: string, end: string, dentistId?: string | null) {
+    let params = new HttpParams().set('start', start).set('end', end);
+    if (dentistId) params = params.set('dentistId', dentistId);
     return this.http.get<Appointment[]>(this.base, { params });
   }
 

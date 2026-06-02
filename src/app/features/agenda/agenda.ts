@@ -4,12 +4,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Appointment } from '../../core/models/appointment.model';
+import { TeamMember } from '../../core/models/user.model';
 import { AppointmentService } from '../../core/services/appointment.service';
+import { AuthService } from '../../core/services/auth.service';
+import { TeamService } from '../../core/services/team.service';
 import { ApiError } from '../../core/models/api-error.model';
 import {
   addDays, dateOnlyIso, dayIndex, decimalHour, formatLocal, parseLocal, sameDay, startOfDayIso, startOfWeek,
@@ -22,13 +27,22 @@ import { AppointmentDialogComponent, AppointmentDialogData } from './dialog/appo
   imports: [
     DatePipe, DragDropModule,
     MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule,
+    MatFormFieldModule, MatSelectModule,
   ],
   templateUrl: './agenda.html',
 })
 export class AgendaComponent implements OnInit {
   private service  = inject(AppointmentService);
+  private auth     = inject(AuthService);
+  private team     = inject(TeamService);
   private dialog   = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
+
+  // Dentists only ever see their own agenda (the API scopes it); receptionists
+  // see everyone and can narrow the view to a single dentist.
+  readonly isReceptionist = computed(() => this.auth.currentUser()?.role === 'RECEPTIONIST');
+  readonly dentists = signal<TeamMember[]>([]);
+  readonly selectedDentistId = signal<string | null>(null);
 
   @ViewChildren('dayColEl') dayCols!: QueryList<ElementRef<HTMLElement>>;
 
@@ -56,13 +70,24 @@ export class AgendaComponent implements OnInit {
     return { start: s, end: e };
   });
 
-  ngOnInit() { this.load(); }
+  ngOnInit() {
+    if (this.isReceptionist()) {
+      this.team.list().subscribe(members =>
+        this.dentists.set(members.filter(m => m.role === 'DENTIST')));
+    }
+    this.load();
+  }
+
+  onDentistFilterChange(dentistId: string | null) {
+    this.selectedDentistId.set(dentistId);
+    this.load();
+  }
 
   load() {
     this.loading.set(true);
     const start = startOfDayIso(this.weekStart());
     const end = startOfDayIso(addDays(this.weekStart(), 6));
-    this.service.list(start, end).subscribe({
+    this.service.list(start, end, this.selectedDentistId()).subscribe({
       next: data => { this.appointments.set(data); this.loading.set(false); },
       error: () => { this.snackBar.open('Erro ao carregar a agenda.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
     });
@@ -93,6 +118,7 @@ export class AgendaComponent implements OnInit {
     const data: AppointmentDialogData = {
       defaultDate: day ?? new Date(),
       defaultTime: hour != null ? `${String(hour).padStart(2, '0')}:00` : undefined,
+      defaultDentistId: this.selectedDentistId() ?? undefined,
     };
     this.openDialog(data);
   }

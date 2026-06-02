@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,8 +12,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Patient } from '../../../core/models/patient.model';
 import { Appointment } from '../../../core/models/appointment.model';
+import { TeamMember } from '../../../core/models/user.model';
 import { PatientService } from '../../../core/services/patient.service';
 import { AppointmentService } from '../../../core/services/appointment.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { TeamService } from '../../../core/services/team.service';
 import { ApiError } from '../../../core/models/api-error.model';
 import { addMinutesToTime, timeOf, toLocalIso } from '../../../core/utils/datetime.util';
 
@@ -21,6 +24,7 @@ export interface AppointmentDialogData {
   appointment?: Appointment;
   defaultDate?: Date;
   defaultTime?: string;
+  defaultDentistId?: string;
 }
 
 @Component({
@@ -36,17 +40,24 @@ export class AppointmentDialogComponent implements OnInit {
   private fb       = inject(FormBuilder);
   private patients = inject(PatientService);
   private service  = inject(AppointmentService);
+  private auth     = inject(AuthService);
+  private team     = inject(TeamService);
   private snackBar = inject(MatSnackBar);
   private ref      = inject(MatDialogRef<AppointmentDialogComponent>);
   readonly data: AppointmentDialogData = inject(MAT_DIALOG_DATA);
 
   readonly loading     = signal(false);
   readonly patientList = signal<Patient[]>([]);
+  readonly dentists    = signal<TeamMember[]>([]);
   readonly isEdit      = signal(false);
   readonly times       = this.buildTimes();
 
+  // Receptionists must pick the dentist; dentists implicitly schedule for themselves.
+  readonly isReceptionist = computed(() => this.auth.currentUser()?.role === 'RECEPTIONIST');
+
   form = this.fb.nonNullable.group({
     patientId: ['', Validators.required],
+    dentistId: [''],
     date:      [new Date() as Date | null, Validators.required],
     startTime: ['09:00', Validators.required],
     endTime:   ['10:00', Validators.required],
@@ -60,6 +71,7 @@ export class AppointmentDialogComponent implements OnInit {
       this.isEdit.set(true);
       this.form.patchValue({
         patientId: appt.patientId,
+        dentistId: appt.dentistId,
         date: new Date(appt.startTime),
         startTime: timeOf(appt.startTime),
         endTime: timeOf(appt.endTime),
@@ -70,6 +82,12 @@ export class AppointmentDialogComponent implements OnInit {
       if (this.data.defaultTime) {
         this.form.controls.startTime.setValue(this.data.defaultTime);
         this.form.controls.endTime.setValue(addMinutesToTime(this.data.defaultTime, 60));
+      }
+      if (this.isReceptionist()) {
+        this.form.controls.dentistId.addValidators(Validators.required);
+        if (this.data.defaultDentistId) this.form.controls.dentistId.setValue(this.data.defaultDentistId);
+        this.team.list().subscribe(members =>
+          this.dentists.set(members.filter(m => m.role === 'DENTIST')));
       }
     }
   }
@@ -96,7 +114,7 @@ export class AppointmentDialogComponent implements OnInit {
     const appt = this.data.appointment;
     const req$ = appt
       ? this.service.reschedule(appt.id, { startTime, endTime })
-      : this.service.create({ patientId: v.patientId, startTime, endTime });
+      : this.service.create({ patientId: v.patientId, dentistId: v.dentistId || null, startTime, endTime });
 
     req$.subscribe({
       next: () => { this.snackBar.open(appt ? 'Consulta reagendada.' : 'Consulta agendada.', '', { duration: 3000 }); this.ref.close(true); },
