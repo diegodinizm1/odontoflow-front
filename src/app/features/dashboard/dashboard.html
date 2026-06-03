@@ -43,6 +43,31 @@
       </div>
     </div>
 
+    <!-- Online booking link + pending requests -->
+    <div class="grid lg:grid-cols-3 gap-4 mb-6">
+      <div class="card p-5 lg:col-span-2">
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="material-symbols-rounded text-brand-700" style="font-size:20px">link</span>
+          <h2 class="font-display text-base text-ink">Link de agendamento online</h2>
+        </div>
+        <p class="text-sm text-ink-soft mb-3">Compartilhe com seus pacientes para receber solicitações de horário.</p>
+        <div class="flex items-center gap-2">
+          <input class="flex-1 min-w-0 rounded-xl border border-line bg-paper px-3 h-10 text-sm text-ink-soft"
+                 [value]="bookingUrl()" readonly />
+          <button mat-stroked-button type="button" (click)="copyLink()">
+            <mat-icon>content_copy</mat-icon> Copiar
+          </button>
+        </div>
+      </div>
+
+      <a routerLink="/agenda" class="card p-5 transition hover:shadow-md"
+         [class.ring-2]="d.pendingBookingRequests > 0" [class.ring-amber-300]="d.pendingBookingRequests > 0">
+        <div class="kpi-icon bg-alert-bg text-alert-fg"><span class="material-symbols-rounded">notifications_active</span></div>
+        <p class="kpi-value">{{ d.pendingBookingRequests }}</p>
+        <p class="kpi-label">Solicitações a confirmar</p>
+      </a>
+    </div>
+
     <!-- Today's agenda -->
     <section class="card p-6">
       <div class="flex items-center justify-between mb-4">

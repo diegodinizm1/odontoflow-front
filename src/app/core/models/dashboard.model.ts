@@ -5,5 +5,7 @@ export interface DashboardSummary {
   appointmentsToday: number;
   paidThisMonth: number;
   pendingTotal: number;
+  pendingBookingRequests: number;
+  publicSlug: string;
   todayAppointments: Appointment[];
 }

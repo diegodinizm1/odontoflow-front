@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +23,12 @@ export class DashboardComponent implements OnInit {
   readonly data    = signal<DashboardSummary | null>(null);
   readonly today   = new Date();
 
+  // Shareable public online-booking link for this clinic.
+  readonly bookingUrl = computed(() => {
+    const slug = this.data()?.publicSlug;
+    return slug ? `${location.origin}/agendar/${slug}` : '';
+  });
+
   ngOnInit() {
     this.service.summary().subscribe({
       next: d => { this.data.set(d); this.loading.set(false); },
@@ -35,6 +41,15 @@ export class DashboardComponent implements OnInit {
   }
 
   statusLabel(a: Appointment): string {
-    return { SCHEDULED: 'Agendada', COMPLETED: 'Concluída', CANCELED: 'Cancelada' }[a.status];
+    return { PENDING: 'Pendente', SCHEDULED: 'Agendada', COMPLETED: 'Concluída', CANCELED: 'Cancelada' }[a.status];
+  }
+
+  copyLink() {
+    const url = this.bookingUrl();
+    if (!url) return;
+    navigator.clipboard.writeText(url).then(
+      () => this.snackBar.open('Link copiado!', '', { duration: 2500 }),
+      () => this.snackBar.open('Não foi possível copiar o link.', 'Fechar', { duration: 3000 }),
+    );
   }
 }

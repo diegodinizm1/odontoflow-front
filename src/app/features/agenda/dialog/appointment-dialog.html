@@ -8,10 +8,17 @@
   </div>
 
   @if (isEdit()) {
-    <p class="text-sm text-ink-soft mb-5 flex items-center gap-1.5">
+    <p class="text-sm text-ink-soft mb-2 flex items-center gap-1.5">
       <span class="material-symbols-rounded" style="font-size:17px">person</span>
       {{ data.appointment?.patientName }}
     </p>
+    @if (data.appointment?.status === 'PENDING') {
+      <p class="text-xs font-semibold mb-4 inline-flex items-center gap-1.5 px-2 py-1 rounded-md"
+         style="background:#FFF7E6; color:#7A4E00;">
+        <span class="material-symbols-rounded" style="font-size:15px">schedule</span>
+        Solicitação online — aguardando confirmação
+      </p>
+    }
   }
 
   <form [formGroup]="form" class="flex flex-col pt-2">
@@ -73,19 +80,33 @@
           <button mat-button type="button" class="danger-text" (click)="cancelAppointment()">
             <mat-icon>event_busy</mat-icon> Cancelar consulta
           </button>
+        } @else if (isEdit() && data.appointment?.status === 'PENDING') {
+          <button mat-button type="button" class="danger-text" (click)="rejectBooking()" [disabled]="loading()">
+            <mat-icon>close</mat-icon> Recusar
+          </button>
         }
       </div>
       <div class="flex gap-2">
         @if (isEdit() && data.appointment?.status === 'SCHEDULED') {
           <button mat-stroked-button type="button" (click)="complete()">Concluir</button>
         }
-        <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="form.invalid || loading()">
-          @if (loading()) {
-            <mat-spinner diameter="18" class="inline-spinner" />
-          } @else {
-            {{ isEdit() ? 'Salvar' : 'Agendar' }}
-          }
-        </button>
+        @if (isEdit() && data.appointment?.status === 'PENDING') {
+          <button mat-flat-button color="primary" type="button" (click)="confirmBooking()" [disabled]="loading()">
+            @if (loading()) {
+              <mat-spinner diameter="18" class="inline-spinner" />
+            } @else {
+              Confirmar
+            }
+          </button>
+        } @else {
+          <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="form.invalid || loading()">
+            @if (loading()) {
+              <mat-spinner diameter="18" class="inline-spinner" />
+            } @else {
+              {{ isEdit() ? 'Salvar' : 'Agendar' }}
+            }
+          </button>
+        }
       </div>
     </div>
 

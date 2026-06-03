@@ -368,6 +368,31 @@ $agenda-gutter: 64px;
   border-left-color: var(--ink-faint);
   color: var(--ink-soft);
 }
+.appt-block.appt-pending {
+  background: #FFF7E6;
+  border-left-color: #D98A00;
+  border-left-style: dashed;
+  color: #7A4E00;
+}
+
+/* Public online-booking slot chips */
+.slot-chip {
+  padding: 7px 14px;
+  border: 1px solid var(--line, #E4E2DC);
+  border-radius: 9px;
+  background: var(--surface, #fff);
+  color: var(--ink, #1B2A29);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .1s, background .1s, color .1s;
+}
+.slot-chip:hover { border-color: var(--brand-500, #2E7D6F); }
+.slot-chip--active {
+  background: var(--brand-700, #1F6155);
+  border-color: var(--brand-700, #1F6155);
+  color: #fff;
+}
 
 /* ============================================================
    Appointment dialog

@@ -11,6 +11,8 @@ export const routes: Routes = [
       { path: 'register', loadComponent: () => import('./features/auth/register/register').then(m => m.RegisterComponent) },
     ],
   },
+  // Public, unauthenticated online-booking page (patient-facing).
+  { path: 'agendar/:slug', loadComponent: () => import('./features/booking/public-booking').then(m => m.PublicBookingComponent) },
   {
     path: '',
     component: ShellComponent,

@@ -76,6 +76,7 @@
                 cdkDrag
                 (cdkDragEnded)="onDrop(appt, $event)"
                 [class.appt-completed]="appt.status === 'COMPLETED'"
+                [class.appt-pending]="appt.status === 'PENDING'"
                 [style.top]="blockStyle(appt).top"
                 [style.height]="blockStyle(appt).height"
                 (click)="openEdit(appt, $event)">

@@ -1,0 +1,106 @@
+<div class="min-h-screen bg-paper py-10 px-4">
+  <div class="mx-auto" style="max-width: 560px;">
+
+    <!-- Brand header -->
+    <div class="flex items-center justify-center gap-2 mb-6">
+      <span class="material-symbols-rounded text-brand-700" style="font-size: 28px;">dentistry</span>
+      <span class="font-display text-2xl text-ink">OdontoFlow</span>
+    </div>
+
+    @if (loadingClinic()) {
+      <div class="flex justify-center py-24"><mat-spinner diameter="38" /></div>
+    } @else if (notFound()) {
+      <div class="card text-center py-16">
+        <span class="material-symbols-rounded text-ink-faint" style="font-size: 40px;">search_off</span>
+        <h1 class="font-display text-xl text-ink mt-3 mb-1">Clínica não encontrada</h1>
+        <p class="text-ink-soft text-sm">Confira o link de agendamento com a clínica.</p>
+      </div>
+    } @else if (confirmation(); as c) {
+      <!-- Success -->
+      <div class="card text-center py-14">
+        <span class="material-symbols-rounded text-brand-700" style="font-size: 48px;">check_circle</span>
+        <h1 class="font-display text-2xl text-ink mt-3 mb-2">Solicitação enviada!</h1>
+        <p class="text-ink-soft">
+          Sua solicitação com <strong>{{ c.dentistName }}</strong> para
+          <strong>{{ c.date.split('-')[2] }}/{{ c.date.split('-')[1] }}</strong> às
+          <strong>{{ c.time }}</strong> foi recebida.
+        </p>
+        <p class="text-ink-soft text-sm mt-3">
+          A <strong>{{ clinic()?.clinicName }}</strong> vai confirmar e entrar em contato pelo seu telefone.
+        </p>
+      </div>
+    } @else {
+      <div class="card">
+        <h1 class="font-display text-2xl text-ink mb-1">{{ clinic()?.clinicName }}</h1>
+        <p class="text-ink-soft text-sm mb-6">Agende sua consulta online em poucos passos.</p>
+
+        <!-- 1. Dentist -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Profissional</mat-label>
+          <mat-select [value]="dentistId()" (selectionChange)="onDentistChange($event.value)">
+            @for (d of clinic()?.dentists ?? []; track d.id) {
+              <mat-option [value]="d.id">{{ d.fullName }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <!-- 2. Date -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Dia</mat-label>
+          <input matInput [matDatepicker]="picker" [min]="today"
+                 [value]="date()" (dateChange)="onDateChange($event.value)" readonly />
+          <mat-datepicker-toggle matIconSuffix [for]="picker" />
+          <mat-datepicker #picker />
+        </mat-form-field>
+
+        <!-- 3. Slots -->
+        @if (canPickSlot()) {
+          <div class="mb-5">
+            <p class="text-sm font-medium text-ink-soft mb-2">Horários livres</p>
+            @if (loadingSlots()) {
+              <div class="flex justify-center py-6"><mat-spinner diameter="26" /></div>
+            } @else if (slots().length === 0) {
+              <p class="text-sm text-ink-faint py-3">Nenhum horário disponível nesse dia. Tente outra data.</p>
+            } @else {
+              <div class="flex flex-wrap gap-2">
+                @for (s of slots(); track s) {
+                  <button type="button"
+                          class="slot-chip"
+                          [class.slot-chip--active]="selectedTime() === s"
+                          (click)="pickSlot(s)">{{ s }}</button>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- 4. Contact + confirm -->
+        @if (selectedTime()) {
+          <form [formGroup]="contact" class="border-t border-line pt-5">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Seu nome</mat-label>
+              <input matInput formControlName="patientName" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Telefone (WhatsApp)</mat-label>
+              <input matInput formControlName="patientPhone" appMask="phone" inputmode="tel" />
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" type="button" class="w-full"
+                    (click)="confirm()" [disabled]="contact.invalid || booking()">
+              @if (booking()) {
+                <mat-spinner diameter="18" class="inline-spinner" />
+              } @else {
+                Solicitar {{ selectedTime() }}
+              }
+            </button>
+          </form>
+        }
+      </div>
+
+      <p class="text-center text-xs text-ink-faint mt-4">
+        A clínica confirma cada solicitação antes do atendimento.
+      </p>
+    }
+  </div>
+</div>

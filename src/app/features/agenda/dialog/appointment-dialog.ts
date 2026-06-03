@@ -146,6 +146,27 @@ export class AppointmentDialogComponent implements OnInit {
     });
   }
 
+  // Online booking requests come in as PENDING; the clinic confirms or rejects them here.
+  confirmBooking() {
+    const appt = this.data.appointment;
+    if (!appt) return;
+    this.loading.set(true);
+    this.service.updateStatus(appt.id, 'SCHEDULED').subscribe({
+      next: () => { this.snackBar.open('Solicitação confirmada.', '', { duration: 3000 }); this.ref.close(true); },
+      error: () => { this.snackBar.open('Erro ao confirmar.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
+    });
+  }
+
+  rejectBooking() {
+    const appt = this.data.appointment;
+    if (!appt || !confirm('Recusar esta solicitação de agendamento?')) return;
+    this.loading.set(true);
+    this.service.updateStatus(appt.id, 'CANCELED').subscribe({
+      next: () => { this.snackBar.open('Solicitação recusada.', '', { duration: 3000 }); this.ref.close(true); },
+      error: () => { this.snackBar.open('Erro ao recusar.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
+    });
+  }
+
   close() { this.ref.close(false); }
 
   private buildTimes(): string[] {
