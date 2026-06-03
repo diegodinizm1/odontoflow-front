@@ -8,6 +8,7 @@ import { PublicBookingService } from '../../core/services/public-booking.service
 import { ApiError } from '../../core/models/api-error.model';
 import { MaskDirective } from '../../core/directives/mask.directive';
 import { dateOnlyIso } from '../../core/utils/datetime.util';
+import { DentalSpecialty, specialtyLabel } from '../../core/utils/specialty.util';
 import { SelectComponent } from '../../shared/ui/select';
 import { DatepickerComponent } from '../../shared/ui/datepicker';
 import { SpinnerComponent } from '../../shared/ui/spinner';
@@ -49,8 +50,27 @@ export class PublicBookingComponent implements OnInit {
     this.clinic()?.services.find(s => s.id === this.serviceId()) ?? null);
   readonly dentistName = computed(() =>
     this.clinic()?.dentists.find(d => d.id === this.dentistId())?.fullName ?? '');
-  readonly dentistOptions = computed(() =>
-    (this.clinic()?.dentists ?? []).map(d => ({ value: d.id, label: d.fullName })));
+
+  // Only dentists who perform the chosen service.
+  readonly dentistOptions = computed(() => {
+    const ids = new Set(this.selectedService()?.dentistIds ?? []);
+    return (this.clinic()?.dentists ?? [])
+      .filter(d => ids.has(d.id))
+      .map(d => ({ value: d.id, label: d.fullName }));
+  });
+
+  // Services grouped by dental area for display.
+  readonly serviceGroups = computed(() => {
+    const groups = new Map<DentalSpecialty, PublicService[]>();
+    for (const s of this.clinic()?.services ?? []) {
+      const list = groups.get(s.category) ?? [];
+      list.push(s);
+      groups.set(s.category, list);
+    }
+    return [...groups.entries()].map(([category, services]) => ({
+      category, label: specialtyLabel(category), services,
+    }));
+  });
 
   readonly canPickSlot = computed(() => !!this.serviceId() && !!this.dentistId() && !!this.date());
 
@@ -69,6 +89,7 @@ export class PublicBookingComponent implements OnInit {
 
   pickService(s: PublicService) {
     this.serviceId.set(s.id);
+    this.dentistId.set(null); // available dentists depend on the service
     this.refreshSlots();
   }
 

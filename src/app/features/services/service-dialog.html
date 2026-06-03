@@ -15,6 +15,11 @@
       }
     </div>
 
+    <div class="field">
+      <label class="field-label">Área da odontologia</label>
+      <app-select formControlName="category" [options]="specialties" />
+    </div>
+
     <div class="grid grid-cols-2 gap-3">
       <div class="field">
         <label class="field-label">Duração (min)</label>
@@ -30,6 +35,23 @@
           <span class="field-error">Informe o preço</span>
         }
       </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Dentistas que realizam</label>
+      @if (dentists().length === 0) {
+        <p class="text-sm text-ink-faint">Nenhum dentista na equipe ainda.</p>
+      } @else {
+        <div class="flex flex-col gap-1.5 max-h-44 overflow-y-auto rounded-xl border border-line p-2">
+          @for (d of dentists(); track d.id) {
+            <label class="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-paper cursor-pointer">
+              <input type="checkbox" class="accent-brand-700 w-4 h-4"
+                     [checked]="isChecked(d.id)" (change)="toggleDentist(d.id)" />
+              <span class="text-sm text-ink">{{ d.fullName }}</span>
+            </label>
+          }
+        </div>
+      }
     </div>
 
     <div class="flex justify-end gap-2 pt-1">

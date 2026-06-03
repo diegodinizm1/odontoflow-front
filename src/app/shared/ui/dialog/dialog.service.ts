@@ -54,7 +54,7 @@ export class DialogService {
       parent: this.injector,
       providers: [
         { provide: DialogRef, useValue: ref },
-        { provide: DIALOG_DATA, useValue: config.data ?? {} },
+        { provide: DIALOG_DATA, useValue: config.data ?? null },
       ],
     });
     containerRef.instance.vc.createComponent(component, { injector: contentInjector });

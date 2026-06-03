@@ -30,6 +30,8 @@
         <thead>
           <tr>
             <th>Serviço</th>
+            <th>Área</th>
+            <th>Dentistas</th>
             <th>Duração</th>
             <th>Preço</th>
             <th class="text-right"></th>
@@ -39,6 +41,8 @@
           @for (s of services(); track s.id) {
             <tr>
               <td><span class="font-medium text-ink">{{ s.name }}</span></td>
+              <td><span class="charge-pill charge-pending">{{ categoryLabel(s.category) }}</span></td>
+              <td><span class="text-ink-soft text-sm">{{ s.dentistIds.length }}</span></td>
               <td><span class="text-ink-soft text-sm">{{ s.durationMinutes }} min</span></td>
               <td><span class="font-semibold text-ink">{{ s.price | currency:'BRL' }}</span></td>
               <td class="text-right whitespace-nowrap">

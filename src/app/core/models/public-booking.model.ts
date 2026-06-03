@@ -6,8 +6,10 @@ export interface PublicDentist {
 export interface PublicService {
   id: string;
   name: string;
+  category: import('../utils/specialty.util').DentalSpecialty;
   durationMinutes: number;
   price: number;
+  dentistIds: string[];
 }
 
 export interface ClinicSummary {

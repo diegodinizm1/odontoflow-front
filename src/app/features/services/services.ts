@@ -7,6 +7,7 @@ import { ToastService } from '../../shared/ui/toast/toast.service';
 import { SpinnerComponent } from '../../shared/ui/spinner';
 import { TooltipDirective } from '../../shared/ui/tooltip.directive';
 import { ServiceDialogComponent } from './service-dialog';
+import { DentalSpecialty, specialtyLabel } from '../../core/utils/specialty.util';
 
 @Component({
   selector: 'app-services',
@@ -36,6 +37,8 @@ export class ServicesComponent implements OnInit {
     this.dialog.open(ServiceDialogComponent, { width: '460px', data: existing ?? null })
       .afterClosed().subscribe(changed => { if (changed) this.load(); });
   }
+
+  categoryLabel(c: DentalSpecialty): string { return specialtyLabel(c); }
 
   remove(s: ClinicService) {
     if (!confirm(`Remover o serviço "${s.name}"?`)) return;
