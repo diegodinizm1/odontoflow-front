@@ -1,26 +1,23 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Role, TeamMember } from '../../core/models/user.model';
 import { TeamService } from '../../core/services/team.service';
 import { AuthService } from '../../core/services/auth.service';
 import { InviteDialogComponent } from './invite-dialog';
+import { DialogService } from '../../shared/ui/dialog/dialog.service';
+import { ToastService } from '../../shared/ui/toast/toast.service';
+import { SpinnerComponent } from '../../shared/ui/spinner';
+import { TooltipDirective } from '../../shared/ui/tooltip.directive';
 
 @Component({
   selector: 'app-team',
   standalone: true,
-  imports: [MatTableModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule],
+  imports: [SpinnerComponent, TooltipDirective],
   templateUrl: './team.html',
 })
 export class TeamComponent implements OnInit {
   private service  = inject(TeamService);
-  private dialog   = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
+  private dialog   = inject(DialogService);
+  private toast    = inject(ToastService);
   private auth     = inject(AuthService);
 
   readonly loading = signal(true);
@@ -35,12 +32,12 @@ export class TeamComponent implements OnInit {
     this.loading.set(true);
     this.service.list().subscribe({
       next: data => { this.members.set(data); this.loading.set(false); },
-      error: () => { this.snackBar.open('Erro ao carregar equipe.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
+      error: () => { this.toast.open('Erro ao carregar equipe.', 'Fechar'); this.loading.set(false); },
     });
   }
 
   openInvite() {
-    this.dialog.open(InviteDialogComponent, { width: '440px', autoFocus: false })
+    this.dialog.open(InviteDialogComponent, { width: '440px' })
       .afterClosed().subscribe(changed => { if (changed) this.load(); });
   }
 
@@ -49,9 +46,9 @@ export class TeamComponent implements OnInit {
     this.service.remove(member.id).subscribe({
       next: () => {
         this.members.update(list => list.filter(m => m.id !== member.id));
-        this.snackBar.open('Membro removido.', '', { duration: 3000 });
+        this.toast.open('Membro removido.');
       },
-      error: () => this.snackBar.open('Erro ao remover membro.', 'Fechar', { duration: 3000 }),
+      error: () => this.toast.open('Erro ao remover membro.', 'Fechar'),
     });
   }
 

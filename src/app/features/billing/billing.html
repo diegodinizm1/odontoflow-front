@@ -8,7 +8,7 @@
   </header>
 
   @if (loading()) {
-    <div class="flex justify-center py-20"><mat-spinner diameter="38" /></div>
+    <div class="flex justify-center py-20 text-brand-700"><app-spinner [size]="38" /></div>
   } @else {
 
     <!-- Current subscription -->
@@ -28,7 +28,7 @@
           </p>
         </div>
         @if (sub.status !== 'CANCELED' && sub.plan !== 'FREE') {
-          <button mat-stroked-button (click)="cancel()">Cancelar assinatura</button>
+          <button class="btn btn-stroked" (click)="cancel()">Cancelar assinatura</button>
         }
       </div>
     }
@@ -60,13 +60,13 @@
             </li>
           </ul>
           <button
-            mat-flat-button
-            [color]="plan.code === currentPlan() ? undefined : 'primary'"
-            class="w-full mt-5"
+            class="btn btn-block mt-5"
+            [class.btn-primary]="plan.code !== currentPlan()"
+            [class.btn-stroked]="plan.code === currentPlan()"
             [disabled]="plan.code === currentPlan() || working() === plan.code"
             (click)="subscribe(plan)">
             @if (working() === plan.code) {
-              <mat-spinner diameter="18" class="inline-spinner" />
+              <app-spinner [size]="18" />
             } @else if (plan.code === currentPlan()) {
               Plano atual
             } @else {

@@ -1,34 +1,32 @@
 import { Component, signal, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiError } from '../../core/models/api-error.model';
 import { TeamService } from '../../core/services/team.service';
+import { DialogRef } from '../../shared/ui/dialog/dialog.tokens';
+import { ToastService } from '../../shared/ui/toast/toast.service';
+import { SelectComponent } from '../../shared/ui/select';
+import { SpinnerComponent } from '../../shared/ui/spinner';
 
 @Component({
   selector: 'app-invite-dialog',
   standalone: true,
-  imports: [
-    ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule,
-    MatSelectModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule,
-  ],
+  imports: [ReactiveFormsModule, SelectComponent, SpinnerComponent],
   templateUrl: './invite-dialog.html',
 })
 export class InviteDialogComponent {
   private fb       = inject(FormBuilder);
   private team     = inject(TeamService);
-  private snackBar = inject(MatSnackBar);
-  private ref      = inject(MatDialogRef<InviteDialogComponent>);
+  private toast    = inject(ToastService);
+  private ref      = inject(DialogRef);
 
   readonly loading = signal(false);
   readonly hidePassword = signal(true);
+
+  readonly roleOptions = [
+    { value: 'DENTIST', label: 'Dentista' },
+    { value: 'RECEPTIONIST', label: 'Recepcionista' },
+  ];
 
   form = this.fb.nonNullable.group({
     fullName: ['', Validators.required],
@@ -41,10 +39,10 @@ export class InviteDialogComponent {
     if (this.form.invalid || this.loading()) return;
     this.loading.set(true);
     this.team.invite(this.form.getRawValue()).subscribe({
-      next: () => { this.snackBar.open('Membro convidado.', '', { duration: 3000 }); this.ref.close(true); },
+      next: () => { this.toast.open('Membro convidado.'); this.ref.close(true); },
       error: (err: HttpErrorResponse) => {
         const api = err.error as ApiError;
-        this.snackBar.open(api?.message ?? 'Erro ao convidar membro.', 'Fechar', { duration: 4000 });
+        this.toast.open(api?.message ?? 'Erro ao convidar membro.', 'Fechar', { duration: 4000 });
         this.loading.set(false);
       },
     });

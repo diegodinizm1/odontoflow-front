@@ -2,8 +2,8 @@
 
   <div class="flex items-center justify-between mb-1">
     <h2 class="font-display text-xl text-ink m-0">{{ isEdit() ? 'Editar consulta' : 'Novo agendamento' }}</h2>
-    <button mat-icon-button (click)="close()" tabindex="-1">
-      <mat-icon class="text-ink-faint">close</mat-icon>
+    <button type="button" class="btn-icon" (click)="close()" tabindex="-1">
+      <span class="material-symbols-rounded">close</span>
     </button>
   </div>
 
@@ -24,87 +24,64 @@
   <form [formGroup]="form" class="flex flex-col pt-2">
 
     @if (!isEdit()) {
-      <mat-form-field appearance="outline">
-        <mat-label>Paciente</mat-label>
-        <mat-select formControlName="patientId">
-          @for (p of patientList(); track p.id) {
-            <mat-option [value]="p.id">{{ p.fullName }}</mat-option>
-          }
-        </mat-select>
-        @if (form.controls.patientId.hasError('required')) {
-          <mat-error>Selecione um paciente</mat-error>
+      <div class="field">
+        <label class="field-label">Paciente</label>
+        <app-select formControlName="patientId" [options]="patientOptions()" placeholder="Selecione um paciente" />
+        @if (form.controls.patientId.invalid && form.controls.patientId.touched) {
+          <span class="field-error">Selecione um paciente</span>
         }
-      </mat-form-field>
+      </div>
 
       @if (isReceptionist()) {
-        <mat-form-field appearance="outline">
-          <mat-label>Dentista</mat-label>
-          <mat-select formControlName="dentistId">
-            @for (d of dentists(); track d.id) {
-              <mat-option [value]="d.id">{{ d.fullName }}</mat-option>
-            }
-          </mat-select>
-          @if (form.controls.dentistId.hasError('required')) {
-            <mat-error>Selecione um dentista</mat-error>
+        <div class="field">
+          <label class="field-label">Dentista</label>
+          <app-select formControlName="dentistId" [options]="dentistOptions()" placeholder="Selecione um dentista" />
+          @if (form.controls.dentistId.invalid && form.controls.dentistId.touched) {
+            <span class="field-error">Selecione um dentista</span>
           }
-        </mat-form-field>
+        </div>
       }
     }
 
-    <mat-form-field appearance="outline">
-      <mat-label>Data</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="date" />
-      <mat-datepicker-toggle matIconSuffix [for]="picker" />
-      <mat-datepicker #picker />
-    </mat-form-field>
+    <div class="field">
+      <label class="field-label">Data</label>
+      <app-datepicker formControlName="date" />
+    </div>
 
     <div class="grid grid-cols-2 gap-3">
-      <mat-form-field appearance="outline">
-        <mat-label>Início</mat-label>
-        <mat-select formControlName="startTime" (selectionChange)="onStartChange($event.value)">
-          @for (t of times; track t) { <mat-option [value]="t">{{ t }}</mat-option> }
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Término</mat-label>
-        <mat-select formControlName="endTime">
-          @for (t of times; track t) { <mat-option [value]="t">{{ t }}</mat-option> }
-        </mat-select>
-      </mat-form-field>
+      <div class="field">
+        <label class="field-label">Início</label>
+        <app-select formControlName="startTime" [options]="timeOptions" (valueChange)="onStartChange($event)" />
+      </div>
+      <div class="field">
+        <label class="field-label">Término</label>
+        <app-select formControlName="endTime" [options]="timeOptions" />
+      </div>
     </div>
 
     <div class="flex items-center justify-between gap-3 pt-2">
       <div>
         @if (isEdit() && data.appointment?.status === 'SCHEDULED') {
-          <button mat-button type="button" class="danger-text" (click)="cancelAppointment()">
-            <mat-icon>event_busy</mat-icon> Cancelar consulta
+          <button type="button" class="btn btn-danger" (click)="cancelAppointment()">
+            <span class="material-symbols-rounded">event_busy</span> Cancelar consulta
           </button>
         } @else if (isEdit() && data.appointment?.status === 'PENDING') {
-          <button mat-button type="button" class="danger-text" (click)="rejectBooking()" [disabled]="loading()">
-            <mat-icon>close</mat-icon> Recusar
+          <button type="button" class="btn btn-danger" (click)="rejectBooking()" [disabled]="loading()">
+            <span class="material-symbols-rounded">close</span> Recusar
           </button>
         }
       </div>
       <div class="flex gap-2">
         @if (isEdit() && data.appointment?.status === 'SCHEDULED') {
-          <button mat-stroked-button type="button" (click)="complete()">Concluir</button>
+          <button type="button" class="btn btn-stroked" (click)="complete()">Concluir</button>
         }
         @if (isEdit() && data.appointment?.status === 'PENDING') {
-          <button mat-flat-button color="primary" type="button" (click)="confirmBooking()" [disabled]="loading()">
-            @if (loading()) {
-              <mat-spinner diameter="18" class="inline-spinner" />
-            } @else {
-              Confirmar
-            }
+          <button type="button" class="btn btn-primary" (click)="confirmBooking()" [disabled]="loading()">
+            @if (loading()) { <app-spinner [size]="18" /> } @else { Confirmar }
           </button>
         } @else {
-          <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="form.invalid || loading()">
-            @if (loading()) {
-              <mat-spinner diameter="18" class="inline-spinner" />
-            } @else {
-              {{ isEdit() ? 'Salvar' : 'Agendar' }}
-            }
+          <button type="button" class="btn btn-primary" (click)="save()" [disabled]="form.invalid || loading()">
+            @if (loading()) { <app-spinner [size]="18" /> } @else { {{ isEdit() ? 'Salvar' : 'Agendar' }} }
           </button>
         }
       </div>

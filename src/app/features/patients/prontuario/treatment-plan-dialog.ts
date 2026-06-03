@@ -1,33 +1,26 @@
 import { Component, signal, inject } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiError } from '../../../core/models/api-error.model';
 import { TreatmentService } from '../../../core/services/treatment.service';
+import { DIALOG_DATA, DialogRef } from '../../../shared/ui/dialog/dialog.tokens';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
+import { SpinnerComponent } from '../../../shared/ui/spinner';
+import { TooltipDirective } from '../../../shared/ui/tooltip.directive';
 
 @Component({
   selector: 'app-treatment-plan-dialog',
   standalone: true,
-  imports: [
-    CurrencyPipe, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule,
-    MatButtonModule, MatIconModule, MatTooltipModule, MatProgressSpinnerModule,
-  ],
+  imports: [CurrencyPipe, ReactiveFormsModule, SpinnerComponent, TooltipDirective],
   templateUrl: './treatment-plan-dialog.html',
 })
 export class TreatmentPlanDialogComponent {
   private fb       = inject(FormBuilder);
   private service  = inject(TreatmentService);
-  private snackBar = inject(MatSnackBar);
-  private ref      = inject(MatDialogRef<TreatmentPlanDialogComponent>);
-  private readonly patientId: string = inject(MAT_DIALOG_DATA).patientId;
+  private toast    = inject(ToastService);
+  private ref      = inject(DialogRef);
+  private readonly patientId: string = (inject(DIALOG_DATA) as { patientId: string }).patientId;
 
   readonly loading = signal(false);
 
@@ -70,10 +63,10 @@ export class TreatmentPlanDialogComponent {
       title: v.title,
       items: v.items.map(i => ({ description: i.description, tooth: i.tooth || null, amount: i.amount! })),
     }).subscribe({
-      next: () => { this.snackBar.open('Plano criado.', '', { duration: 3000 }); this.ref.close(true); },
+      next: () => { this.toast.open('Plano criado.'); this.ref.close(true); },
       error: (err: HttpErrorResponse) => {
         const api = err.error as ApiError;
-        this.snackBar.open(api?.message ?? 'Erro ao criar plano.', 'Fechar', { duration: 4000 });
+        this.toast.open(api?.message ?? 'Erro ao criar plano.', 'Fechar', { duration: 4000 });
         this.loading.set(false);
       },
     });

@@ -9,35 +9,29 @@
     </div>
     <div class="flex items-center gap-2">
       @if (isReceptionist()) {
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-52">
-          <mat-label>Dentista</mat-label>
-          <mat-select [value]="selectedDentistId()"
-                      (selectionChange)="onDentistFilterChange($event.value)">
-            <mat-option [value]="null">Todos os dentistas</mat-option>
-            @for (d of dentists(); track d.id) {
-              <mat-option [value]="d.id">{{ d.fullName }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <div class="w-52">
+          <app-select [value]="selectedDentistId()" [options]="dentistFilterOptions()"
+                      (valueChange)="onDentistFilterChange($event)" />
+        </div>
       }
       <div class="flex items-center rounded-xl border border-line bg-surface overflow-hidden">
-        <button mat-icon-button (click)="prevWeek()" matTooltip="Semana anterior">
-          <mat-icon class="text-ink-soft">chevron_left</mat-icon>
+        <button class="btn-icon !rounded-none" (click)="prevWeek()" uiTooltip="Semana anterior">
+          <span class="material-symbols-rounded">chevron_left</span>
         </button>
         <button (click)="goToday()" class="px-3 h-9 text-sm font-medium text-ink-soft hover:text-ink border-x border-line">Hoje</button>
-        <button mat-icon-button (click)="nextWeek()" matTooltip="Próxima semana">
-          <mat-icon class="text-ink-soft">chevron_right</mat-icon>
+        <button class="btn-icon !rounded-none" (click)="nextWeek()" uiTooltip="Próxima semana">
+          <span class="material-symbols-rounded">chevron_right</span>
         </button>
       </div>
-      <button mat-flat-button color="primary" (click)="openCreate()">
-        <mat-icon>add</mat-icon>
+      <button class="btn btn-primary" (click)="openCreate()">
+        <span class="material-symbols-rounded">add</span>
         Novo agendamento
       </button>
     </div>
   </header>
 
   @if (loading()) {
-    <div class="flex justify-center py-24"><mat-spinner diameter="38" /></div>
+    <div class="flex justify-center py-24 text-brand-700"><app-spinner [size]="38" /></div>
   } @else {
     <div class="card overflow-hidden">
 

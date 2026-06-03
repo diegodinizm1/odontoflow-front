@@ -33,13 +33,13 @@ test('a patient books an appointment online without logging in', async ({ page }
   await expect(page.getByRole('heading', { name: 'Clínica Online E2E' })).toBeVisible();
 
   // pick the dentist
-  await page.locator('mat-select').click();
+  await page.locator('.ui-select-trigger').click();
   await page.getByRole('option', { name: dentistName }).click();
 
   // pick a future date: open the calendar, jump to next month, choose day 15
-  await page.locator('mat-datepicker-toggle button').click();
-  await page.locator('.mat-calendar-next-button').click();
-  await page.locator('.mat-calendar').getByText('15', { exact: true }).click();
+  await page.locator('.ui-date-trigger').click();
+  await page.locator('.ui-cal-next').click();
+  await page.locator('.ui-cal').getByText('15', { exact: true }).click();
 
   // pick a slot
   const slot = page.locator('.slot-chip').first();

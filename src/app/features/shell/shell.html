@@ -1,9 +1,9 @@
-<mat-sidenav-container class="h-screen">
+<div class="flex h-screen overflow-hidden">
 
-  <mat-sidenav mode="side" opened class="w-[264px] border-r border-line">
+  <aside class="w-[264px] shrink-0 flex flex-col border-r border-line bg-surface">
 
     <!-- Brand -->
-    <div class="flex items-center gap-3 px-6 h-[68px] border-b border-line">
+    <div class="flex items-center gap-3 px-6 h-[68px] border-b border-line shrink-0">
       <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-brand-700 text-white shrink-0">
         <span class="material-symbols-rounded" style="font-size:20px">dentistry</span>
       </div>
@@ -14,10 +14,7 @@
     <nav class="flex-1 px-3 py-5 overflow-y-auto">
       <p class="text-[10px] font-bold text-ink-faint uppercase tracking-[0.12em] px-3 pb-2">Clínica</p>
       @for (item of navItems; track item.route) {
-        <a
-          [routerLink]="item.route"
-          routerLinkActive="nav-item-active"
-          class="nav-item">
+        <a [routerLink]="item.route" routerLinkActive="nav-item-active" class="nav-item">
           <span class="material-symbols-rounded nav-icon" style="font-size:21px">{{ item.icon }}</span>
           <span>{{ item.label }}</span>
         </a>
@@ -25,7 +22,7 @@
     </nav>
 
     <!-- User -->
-    <div class="px-3 pb-4 pt-2 border-t border-line">
+    <div class="px-3 pb-4 pt-2 border-t border-line shrink-0">
       <div class="flex items-center gap-3 px-2.5 py-2 rounded-xl hover:bg-paper transition-colors">
         <div class="w-8 h-8 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center shrink-0 font-semibold text-xs">
           {{ initials() }}
@@ -34,16 +31,16 @@
           <p class="text-[13px] font-medium text-ink truncate leading-tight">{{ auth.currentUser()?.email }}</p>
           <p class="text-[11px] text-ink-faint leading-tight">Dentista</p>
         </div>
-        <button mat-icon-button (click)="auth.logout()" matTooltip="Sair" class="shrink-0">
-          <mat-icon class="text-ink-faint" style="font-size:19px">logout</mat-icon>
+        <button type="button" class="btn-icon shrink-0" (click)="auth.logout()" uiTooltip="Sair">
+          <span class="material-symbols-rounded" style="font-size:19px">logout</span>
         </button>
       </div>
     </div>
 
-  </mat-sidenav>
+  </aside>
 
-  <mat-sidenav-content>
+  <main class="flex-1 overflow-y-auto bg-paper">
     <router-outlet />
-  </mat-sidenav-content>
+  </main>
 
-</mat-sidenav-container>
+</div>

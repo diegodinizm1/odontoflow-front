@@ -1,46 +1,42 @@
 <div class="appt-dialog">
   <div class="flex items-center justify-between mb-4">
     <h2 class="font-display text-xl text-ink m-0">Nova cobrança</h2>
-    <button mat-icon-button (click)="close()" tabindex="-1">
-      <mat-icon class="text-ink-faint">close</mat-icon>
+    <button type="button" class="btn-icon" (click)="close()" tabindex="-1">
+      <span class="material-symbols-rounded">close</span>
     </button>
   </div>
 
   <form [formGroup]="form" class="flex flex-col">
-    <mat-form-field appearance="outline">
-      <mat-label>Paciente</mat-label>
-      <mat-select formControlName="patientId">
-        @for (p of patientList(); track p.id) {
-          <mat-option [value]="p.id">{{ p.fullName }}</mat-option>
-        }
-      </mat-select>
-      @if (form.controls.patientId.hasError('required')) {
-        <mat-error>Selecione um paciente</mat-error>
+    <div class="field">
+      <label class="field-label">Paciente</label>
+      <app-select formControlName="patientId" [options]="patientOptions()" placeholder="Selecione um paciente" />
+      @if (form.controls.patientId.invalid && form.controls.patientId.touched) {
+        <span class="field-error">Selecione um paciente</span>
       }
-    </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Descrição</mat-label>
-      <input matInput formControlName="description" placeholder="Ex: Restauração — Dente 26" />
-      @if (form.controls.description.hasError('required')) {
-        <mat-error>Descrição é obrigatória</mat-error>
+    <div class="field">
+      <label class="field-label">Descrição</label>
+      <input class="input" formControlName="description" placeholder="Ex: Restauração — Dente 26" />
+      @if (form.controls.description.invalid && form.controls.description.touched) {
+        <span class="field-error">Descrição é obrigatória</span>
       }
-    </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Valor (R$)</mat-label>
-      <input matInput type="number" formControlName="amount" placeholder="0,00" min="0" step="0.01" />
-      @if (form.controls.amount.hasError('required')) {
-        <mat-error>Informe o valor</mat-error>
+    <div class="field">
+      <label class="field-label">Valor (R$)</label>
+      <input class="input" type="number" formControlName="amount" placeholder="0,00" min="0" step="0.01" />
+      @if (form.controls.amount.hasError('required') && form.controls.amount.touched) {
+        <span class="field-error">Informe o valor</span>
       } @else if (form.controls.amount.hasError('min')) {
-        <mat-error>Valor deve ser maior que zero</mat-error>
+        <span class="field-error">Valor deve ser maior que zero</span>
       }
-    </mat-form-field>
+    </div>
 
     <div class="flex justify-end gap-2 pt-1">
-      <button mat-stroked-button type="button" (click)="close()">Cancelar</button>
-      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="form.invalid || loading()">
-        @if (loading()) { <mat-spinner diameter="18" class="inline-spinner" /> } @else { Criar cobrança }
+      <button type="button" class="btn btn-stroked" (click)="close()">Cancelar</button>
+      <button type="button" class="btn btn-primary" (click)="save()" [disabled]="form.invalid || loading()">
+        @if (loading()) { <app-spinner [size]="18" /> } @else { Criar cobrança }
       </button>
     </div>
   </form>

@@ -1,34 +1,23 @@
 import { Component, signal, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 import { ApiError } from '../../../core/models/api-error.model';
+import { SpinnerComponent } from '../../../shared/ui/spinner';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    RouterLink,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule,
-  ],
+  imports: [ReactiveFormsModule, RouterLink, SpinnerComponent],
   templateUrl: './login.html',
 })
 export class LoginComponent {
   private fb          = inject(FormBuilder);
   private authService = inject(AuthService);
   private router      = inject(Router);
-  private snackBar    = inject(MatSnackBar);
+  private toast       = inject(ToastService);
 
   readonly loading      = signal(false);
   readonly hidePassword = signal(true);
@@ -46,7 +35,7 @@ export class LoginComponent {
       next: () => this.router.navigate(['/inicio']),
       error: (err: HttpErrorResponse) => {
         const api = err.error as ApiError;
-        this.snackBar.open(api?.message ?? 'Erro ao fazer login.', 'Fechar', { duration: 4000 });
+        this.toast.open(api?.message ?? 'Erro ao fazer login.', 'Fechar', { duration: 4000 });
         this.loading.set(false);
       },
     });

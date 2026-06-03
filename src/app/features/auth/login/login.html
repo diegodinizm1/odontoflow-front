@@ -41,35 +41,34 @@
 
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col">
 
-        <mat-form-field appearance="outline">
-          <mat-label>E-mail</mat-label>
-          <input matInput formControlName="email" type="email" autocomplete="email" placeholder="voce@clinica.com" />
-          @if (form.controls.email.hasError('required')) {
-            <mat-error>E-mail é obrigatório</mat-error>
-          } @else if (form.controls.email.hasError('email')) {
-            <mat-error>E-mail inválido</mat-error>
+        <div class="field">
+          <label class="field-label">E-mail</label>
+          <input class="input" formControlName="email" type="email" autocomplete="email" placeholder="voce@clinica.com" />
+          @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+            <span class="field-error">E-mail é obrigatório</span>
+          } @else if (form.controls.email.hasError('email') && form.controls.email.touched) {
+            <span class="field-error">E-mail inválido</span>
           }
-        </mat-form-field>
+        </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Senha</mat-label>
-          <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'" autocomplete="current-password" />
-          <button mat-icon-button matSuffix type="button" tabindex="-1"
-            (click)="hidePassword.set(!hidePassword())"
-            [attr.aria-label]="hidePassword() ? 'Mostrar senha' : 'Ocultar senha'">
-            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-          @if (form.controls.password.hasError('required')) {
-            <mat-error>Senha é obrigatória</mat-error>
+        <div class="field">
+          <label class="field-label">Senha</label>
+          <div class="relative">
+            <input class="input pr-11" formControlName="password" [type]="hidePassword() ? 'password' : 'text'" autocomplete="current-password" />
+            <button type="button" tabindex="-1"
+              class="btn-icon absolute right-1 top-1/2 -translate-y-1/2"
+              (click)="hidePassword.set(!hidePassword())"
+              [attr.aria-label]="hidePassword() ? 'Mostrar senha' : 'Ocultar senha'">
+              <span class="material-symbols-rounded">{{ hidePassword() ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+          @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+            <span class="field-error">Senha é obrigatória</span>
           }
-        </mat-form-field>
+        </div>
 
-        <button mat-flat-button color="primary" type="submit" class="auth-submit" [disabled]="loading()">
-          @if (loading()) {
-            <mat-spinner diameter="20" class="inline-spinner" />
-          } @else {
-            Entrar
-          }
+        <button class="btn btn-primary btn-block auth-submit" type="submit" [disabled]="loading()">
+          @if (loading()) { <app-spinner [size]="20" /> } @else { Entrar }
         </button>
 
       </form>

@@ -5,8 +5,8 @@
       <h1 class="page-title">Financeiro</h1>
       <p class="page-sub">Cobranças e faturamento da clínica</p>
     </div>
-    <button mat-flat-button color="primary" (click)="openCreate()">
-      <mat-icon>add</mat-icon>
+    <button class="btn btn-primary" (click)="openCreate()">
+      <span class="material-symbols-rounded">add</span>
       Nova cobrança
     </button>
   </header>
@@ -34,7 +34,7 @@
   </div>
 
   @if (loading()) {
-    <div class="flex justify-center py-20"><mat-spinner diameter="38" /></div>
+    <div class="flex justify-center py-20 text-brand-700"><app-spinner [size]="38" /></div>
   } @else if (charges().length === 0) {
     <div class="card flex flex-col items-center justify-center text-center py-16 px-6">
       <div class="w-14 h-14 rounded-2xl bg-brand-50 text-brand-700 flex items-center justify-center mb-4">
@@ -42,64 +42,51 @@
       </div>
       <h2 class="font-display text-xl text-ink mb-1">Nenhuma cobrança ainda</h2>
       <p class="text-ink-soft text-sm mb-6 max-w-xs">Crie a primeira cobrança para acompanhar o faturamento.</p>
-      <button mat-flat-button color="primary" (click)="openCreate()">
-        <mat-icon>add</mat-icon> Nova cobrança
+      <button class="btn btn-primary" (click)="openCreate()">
+        <span class="material-symbols-rounded">add</span> Nova cobrança
       </button>
     </div>
   } @else {
     <div class="card overflow-hidden">
-      <table mat-table [dataSource]="charges()" class="w-full">
-
-        <ng-container matColumnDef="patient">
-          <th mat-header-cell *matHeaderCellDef>Paciente</th>
-          <td mat-cell *matCellDef="let c"><span class="font-medium text-ink">{{ c.patientName }}</span></td>
-        </ng-container>
-
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef>Descrição</th>
-          <td mat-cell *matCellDef="let c"><span class="text-ink-soft text-sm">{{ c.description }}</span></td>
-        </ng-container>
-
-        <ng-container matColumnDef="amount">
-          <th mat-header-cell *matHeaderCellDef>Valor</th>
-          <td mat-cell *matCellDef="let c"><span class="font-semibold text-ink">{{ c.amount | currency:'BRL' }}</span></td>
-        </ng-container>
-
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let c">
-            <span class="charge-pill" [class]="'charge-' + c.status.toLowerCase()">{{ statusLabel(c.status) }}</span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let c" class="text-right">
-            <button mat-icon-button [matMenuTriggerFor]="menu">
-              <mat-icon class="text-ink-faint">more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu">
-              @if (c.status !== 'PAID') {
-                <button mat-menu-item (click)="setStatus(c, 'PAID')">
-                  <mat-icon>check_circle</mat-icon><span>Marcar como pago</span>
-                </button>
-              }
-              @if (c.status !== 'PENDING') {
-                <button mat-menu-item (click)="setStatus(c, 'PENDING')">
-                  <mat-icon>schedule</mat-icon><span>Marcar como pendente</span>
-                </button>
-              }
-              @if (c.status !== 'CANCELED') {
-                <button mat-menu-item (click)="setStatus(c, 'CANCELED')">
-                  <mat-icon>cancel</mat-icon><span>Cancelar</span>
-                </button>
-              }
-            </mat-menu>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="columns"></tr>
-        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Status</th>
+            <th class="text-right"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of charges(); track c.id) {
+            <tr>
+              <td><span class="font-medium text-ink">{{ c.patientName }}</span></td>
+              <td><span class="text-ink-soft text-sm">{{ c.description }}</span></td>
+              <td><span class="font-semibold text-ink">{{ c.amount | currency:'BRL' }}</span></td>
+              <td><span class="charge-pill" [class]="'charge-' + c.status.toLowerCase()">{{ statusLabel(c.status) }}</span></td>
+              <td class="text-right">
+                <app-menu align="right">
+                  @if (c.status !== 'PAID') {
+                    <button class="ui-menu-item" (click)="setStatus(c, 'PAID')">
+                      <span class="material-symbols-rounded">check_circle</span> Marcar como pago
+                    </button>
+                  }
+                  @if (c.status !== 'PENDING') {
+                    <button class="ui-menu-item" (click)="setStatus(c, 'PENDING')">
+                      <span class="material-symbols-rounded">schedule</span> Marcar como pendente
+                    </button>
+                  }
+                  @if (c.status !== 'CANCELED') {
+                    <button class="ui-menu-item is-danger" (click)="setStatus(c, 'CANCELED')">
+                      <span class="material-symbols-rounded">cancel</span> Cancelar
+                    </button>
+                  }
+                </app-menu>
+              </td>
+            </tr>
+          }
+        </tbody>
       </table>
     </div>
   }

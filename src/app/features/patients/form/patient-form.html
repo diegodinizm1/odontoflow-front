@@ -1,8 +1,8 @@
 <div class="page max-w-3xl">
 
   <header class="flex items-center gap-3 mb-6">
-    <a mat-icon-button routerLink="/patients" matTooltip="Voltar">
-      <mat-icon class="text-ink-soft">arrow_back</mat-icon>
+    <a class="btn-icon" routerLink="/patients" uiTooltip="Voltar">
+      <span class="material-symbols-rounded">arrow_back</span>
     </a>
     <div>
       <h1 class="page-title">{{ isEdit() ? 'Editar paciente' : 'Novo paciente' }}</h1>
@@ -16,50 +16,42 @@
       <p class="text-[11px] font-bold text-ink-faint uppercase tracking-[0.1em] mb-5">Dados pessoais</p>
 
       <div class="grid sm:grid-cols-2 gap-x-5">
-        <div class="sm:col-span-2">
-          <mat-form-field appearance="outline">
-            <mat-label>Nome completo</mat-label>
-            <input matInput formControlName="fullName" placeholder="Nome do paciente" />
-            @if (form.controls.fullName.hasError('required')) {
-              <mat-error>Nome é obrigatório</mat-error>
-            }
-          </mat-form-field>
+        <div class="sm:col-span-2 field">
+          <label class="field-label">Nome completo</label>
+          <input class="input" formControlName="fullName" placeholder="Nome do paciente" />
+          @if (form.controls.fullName.invalid && form.controls.fullName.touched) {
+            <span class="field-error">Nome é obrigatório</span>
+          }
         </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Celular</mat-label>
-          <input matInput formControlName="phone" placeholder="(00) 00000-0000" appMask="phone" inputmode="numeric" maxlength="15" />
-        </mat-form-field>
+        <div class="field">
+          <label class="field-label">Celular</label>
+          <input class="input" formControlName="phone" placeholder="(00) 00000-0000" appMask="phone" inputmode="numeric" maxlength="15" />
+        </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Data de nascimento</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="dateOfBirth" />
-          <mat-datepicker-toggle matIconSuffix [for]="picker" />
-          <mat-datepicker #picker />
-        </mat-form-field>
+        <div class="field">
+          <label class="field-label">Data de nascimento</label>
+          <app-datepicker formControlName="dateOfBirth" placeholder="dd/mm/aaaa" />
+        </div>
       </div>
 
       <div class="h-px bg-line my-5"></div>
 
       <p class="text-[11px] font-bold text-ink-faint uppercase tracking-[0.1em] mb-5">Anamnese</p>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Alertas médicos</mat-label>
-        <textarea matInput formControlName="medicalAlerts" rows="4"
+      <div class="field">
+        <label class="field-label">Alertas médicos</label>
+        <textarea class="textarea" formControlName="medicalAlerts" rows="4"
           placeholder="Ex: Alérgico a penicilina, diabético, hipertenso, uso contínuo de anticoagulante…"></textarea>
-        <mat-hint>Informações críticas de saúde que devem ser vistas em todo atendimento.</mat-hint>
-      </mat-form-field>
+        <span class="field-hint">Informações críticas de saúde que devem ser vistas em todo atendimento.</span>
+      </div>
 
     </div>
 
     <div class="flex justify-end gap-3 mt-5">
-      <a mat-stroked-button routerLink="/patients">Cancelar</a>
-      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || loading()">
-        @if (loading()) {
-          <mat-spinner diameter="18" class="inline-spinner" />
-        } @else {
-          {{ isEdit() ? 'Salvar alterações' : 'Cadastrar paciente' }}
-        }
+      <a class="btn btn-stroked" routerLink="/patients">Cancelar</a>
+      <button class="btn btn-primary" type="submit" [disabled]="form.invalid || loading()">
+        @if (loading()) { <app-spinner [size]="18" /> } @else { {{ isEdit() ? 'Salvar alterações' : 'Cadastrar paciente' }} }
       </button>
     </div>
   </form>

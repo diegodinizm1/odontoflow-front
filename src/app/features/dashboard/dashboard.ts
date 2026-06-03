@@ -1,23 +1,21 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { DashboardSummary } from '../../core/models/dashboard.model';
 import { Appointment } from '../../core/models/appointment.model';
 import { DashboardService } from '../../core/services/dashboard.service';
+import { SpinnerComponent } from '../../shared/ui/spinner';
+import { ToastService } from '../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [CurrencyPipe, DatePipe, RouterLink, SpinnerComponent],
   templateUrl: './dashboard.html',
 })
 export class DashboardComponent implements OnInit {
   private service  = inject(DashboardService);
-  private snackBar = inject(MatSnackBar);
+  private toast    = inject(ToastService);
 
   readonly loading = signal(true);
   readonly data    = signal<DashboardSummary | null>(null);
@@ -32,7 +30,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.service.summary().subscribe({
       next: d => { this.data.set(d); this.loading.set(false); },
-      error: () => { this.snackBar.open('Erro ao carregar o painel.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
+      error: () => { this.toast.open('Erro ao carregar o painel.', 'Fechar'); this.loading.set(false); },
     });
   }
 
@@ -48,8 +46,8 @@ export class DashboardComponent implements OnInit {
     const url = this.bookingUrl();
     if (!url) return;
     navigator.clipboard.writeText(url).then(
-      () => this.snackBar.open('Link copiado!', '', { duration: 2500 }),
-      () => this.snackBar.open('Não foi possível copiar o link.', 'Fechar', { duration: 3000 }),
+      () => this.toast.open('Link copiado!', '', { duration: 2500 }),
+      () => this.toast.open('Não foi possível copiar o link.', 'Fechar'),
     );
   }
 }

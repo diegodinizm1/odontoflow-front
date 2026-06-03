@@ -8,7 +8,7 @@
     </div>
 
     @if (loadingClinic()) {
-      <div class="flex justify-center py-24"><mat-spinner diameter="38" /></div>
+      <div class="flex justify-center py-24 text-brand-700"><app-spinner [size]="38" /></div>
     } @else if (notFound()) {
       <div class="card text-center py-16">
         <span class="material-symbols-rounded text-ink-faint" style="font-size: 40px;">search_off</span>
@@ -35,30 +35,24 @@
         <p class="text-ink-soft text-sm mb-6">Agende sua consulta online em poucos passos.</p>
 
         <!-- 1. Dentist -->
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>Profissional</mat-label>
-          <mat-select [value]="dentistId()" (selectionChange)="onDentistChange($event.value)">
-            @for (d of clinic()?.dentists ?? []; track d.id) {
-              <mat-option [value]="d.id">{{ d.fullName }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <div class="field">
+          <label class="field-label">Profissional</label>
+          <app-select [value]="dentistId()" [options]="dentistOptions()"
+                      placeholder="Selecione o profissional" (valueChange)="onDentistChange($event)" />
+        </div>
 
         <!-- 2. Date -->
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>Dia</mat-label>
-          <input matInput [matDatepicker]="picker" [min]="today"
-                 [value]="date()" (dateChange)="onDateChange($event.value)" readonly />
-          <mat-datepicker-toggle matIconSuffix [for]="picker" />
-          <mat-datepicker #picker />
-        </mat-form-field>
+        <div class="field">
+          <label class="field-label">Dia</label>
+          <app-datepicker [value]="date()" [min]="today" (valueChange)="onDateChange($event)" />
+        </div>
 
         <!-- 3. Slots -->
         @if (canPickSlot()) {
           <div class="mb-5">
             <p class="text-sm font-medium text-ink-soft mb-2">Horários livres</p>
             @if (loadingSlots()) {
-              <div class="flex justify-center py-6"><mat-spinner diameter="26" /></div>
+              <div class="flex justify-center py-6 text-brand-700"><app-spinner [size]="26" /></div>
             } @else if (slots().length === 0) {
               <p class="text-sm text-ink-faint py-3">Nenhum horário disponível nesse dia. Tente outra data.</p>
             } @else {
@@ -77,22 +71,18 @@
         <!-- 4. Contact + confirm -->
         @if (selectedTime()) {
           <form [formGroup]="contact" class="border-t border-line pt-5">
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>Seu nome</mat-label>
-              <input matInput formControlName="patientName" />
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>Telefone (WhatsApp)</mat-label>
-              <input matInput formControlName="patientPhone" appMask="phone" inputmode="tel" />
-            </mat-form-field>
+            <div class="field">
+              <label class="field-label">Seu nome</label>
+              <input class="input" formControlName="patientName" />
+            </div>
+            <div class="field">
+              <label class="field-label">Telefone (WhatsApp)</label>
+              <input class="input" formControlName="patientPhone" appMask="phone" inputmode="tel" />
+            </div>
 
-            <button mat-flat-button color="primary" type="button" class="w-full"
+            <button class="btn btn-primary btn-block" type="button"
                     (click)="confirm()" [disabled]="contact.invalid || booking()">
-              @if (booking()) {
-                <mat-spinner diameter="18" class="inline-spinner" />
-              } @else {
-                Solicitar {{ selectedTime() }}
-              }
+              @if (booking()) { <app-spinner [size]="18" /> } @else { Solicitar {{ selectedTime() }} }
             </button>
           </form>
         }

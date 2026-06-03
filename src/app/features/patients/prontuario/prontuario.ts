@@ -2,13 +2,6 @@ import { Component, signal, inject, OnInit } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { Patient } from '../../../core/models/patient.model';
@@ -22,13 +15,18 @@ import { PatientFileService } from '../../../core/services/patient-file.service'
 import { TreatmentService } from '../../../core/services/treatment.service';
 import { OdontogramComponent } from './odontogram';
 import { TreatmentPlanDialogComponent } from './treatment-plan-dialog';
+import { DialogService } from '../../../shared/ui/dialog/dialog.service';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
+import { SpinnerComponent } from '../../../shared/ui/spinner';
+import { MenuComponent } from '../../../shared/ui/menu';
+import { TooltipDirective } from '../../../shared/ui/tooltip.directive';
 
 @Component({
   selector: 'app-prontuario',
   standalone: true,
   imports: [
     CurrencyPipe, DatePipe, FormsModule, RouterLink, OdontogramComponent,
-    MatButtonModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatTooltipModule,
+    SpinnerComponent, MenuComponent, TooltipDirective,
   ],
   templateUrl: './prontuario.html',
 })
@@ -38,8 +36,8 @@ export class ProntuarioComponent implements OnInit {
   private records  = inject(ClinicalRecordService);
   private files    = inject(PatientFileService);
   private treatments = inject(TreatmentService);
-  private dialog   = inject(MatDialog);
-  private snackBar  = inject(MatSnackBar);
+  private dialog   = inject(DialogService);
+  private toast     = inject(ToastService);
 
   private patientId = '';
 
@@ -59,7 +57,7 @@ export class ProntuarioComponent implements OnInit {
     this.patientId = this.route.snapshot.paramMap.get('id')!;
     this.patients.getById(this.patientId).subscribe({
       next: p => this.patient.set(p),
-      error: () => this.snackBar.open('Paciente não encontrado.', 'Fechar', { duration: 3000 }),
+      error: () => this.toast.open('Paciente não encontrado.', 'Fechar'),
     });
     this.loadHistory(true);
     this.loadFiles();
@@ -75,7 +73,7 @@ export class ProntuarioComponent implements OnInit {
         }
         this.loading.set(false);
       },
-      error: () => { this.snackBar.open('Erro ao carregar prontuário.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
+      error: () => { this.toast.open('Erro ao carregar prontuário.', 'Fechar'); this.loading.set(false); },
     });
   }
 
@@ -99,14 +97,14 @@ export class ProntuarioComponent implements OnInit {
       clinicalNotes: this.note().trim() || null,
     }).subscribe({
       next: () => {
-        this.snackBar.open('Evolução salva.', '', { duration: 3000 });
+        this.toast.open('Evolução salva.', '');
         this.note.set('');
         this.saving.set(false);
         this.loadHistory(false);
       },
       error: (err: HttpErrorResponse) => {
         const api = err.error as ApiError;
-        this.snackBar.open(api?.message ?? 'Erro ao salvar evolução.', 'Fechar', { duration: 4000 });
+        this.toast.open(api?.message ?? 'Erro ao salvar evolução.', 'Fechar');
         this.saving.set(false);
       },
     });
@@ -132,12 +130,12 @@ export class ProntuarioComponent implements OnInit {
     this.uploading.set(true);
     forkJoin(files.map(f => this.files.upload(this.patientId, f))).subscribe({
       next: () => {
-        this.snackBar.open(files.length > 1 ? 'Arquivos enviados.' : 'Arquivo enviado.', '', { duration: 3000 });
+        this.toast.open(files.length > 1 ? 'Arquivos enviados.' : 'Arquivo enviado.', '');
         this.uploading.set(false);
         this.loadFiles();
       },
       error: () => {
-        this.snackBar.open('Erro ao enviar arquivo.', 'Fechar', { duration: 4000 });
+        this.toast.open('Erro ao enviar arquivo.', 'Fechar');
         this.uploading.set(false);
       },
     });
@@ -149,9 +147,9 @@ export class ProntuarioComponent implements OnInit {
     this.files.delete(this.patientId, f.id).subscribe({
       next: () => {
         this.fileList.update(list => list.filter(x => x.id !== f.id));
-        this.snackBar.open('Arquivo removido.', '', { duration: 3000 });
+        this.toast.open('Arquivo removido.', '');
       },
-      error: () => this.snackBar.open('Erro ao remover arquivo.', 'Fechar', { duration: 3000 }),
+      error: () => this.toast.open('Erro ao remover arquivo.', 'Fechar'),
     });
   }
 
@@ -164,14 +162,14 @@ export class ProntuarioComponent implements OnInit {
   }
 
   openCreatePlan() {
-    this.dialog.open(TreatmentPlanDialogComponent, { width: '600px', autoFocus: false, data: { patientId: this.patientId } })
+    this.dialog.open(TreatmentPlanDialogComponent, { width: '600px', data: { patientId: this.patientId } })
       .afterClosed().subscribe(changed => { if (changed) this.loadPlans(); });
   }
 
   setPlanStatus(plan: TreatmentPlan, status: TreatmentPlanStatus) {
     this.treatments.updateStatus(this.patientId, plan.id, status).subscribe({
       next: () => this.loadPlans(),
-      error: () => this.snackBar.open('Erro ao atualizar o plano.', 'Fechar', { duration: 3000 }),
+      error: () => this.toast.open('Erro ao atualizar o plano.', 'Fechar'),
     });
   }
 
@@ -179,10 +177,10 @@ export class ProntuarioComponent implements OnInit {
     if (item.status === 'DONE') return;
     this.treatments.completeItem(this.patientId, plan.id, item.id).subscribe({
       next: () => {
-        this.snackBar.open('Procedimento concluído — cobrança gerada no Financeiro.', '', { duration: 3500 });
+        this.toast.open('Procedimento concluído — cobrança gerada no Financeiro.', '');
         this.loadPlans();
       },
-      error: () => this.snackBar.open('Erro ao concluir o procedimento.', 'Fechar', { duration: 3000 }),
+      error: () => this.toast.open('Erro ao concluir o procedimento.', 'Fechar'),
     });
   }
 

@@ -1,10 +1,7 @@
 import { Component, inject, computed } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../core/services/auth.service';
+import { TooltipDirective } from '../../shared/ui/tooltip.directive';
 
 interface NavItem {
   label: string;
@@ -15,10 +12,7 @@ interface NavItem {
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [
-    RouterOutlet, RouterLink, RouterLinkActive,
-    MatSidenavModule, MatIconModule, MatButtonModule, MatTooltipModule,
-  ],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, TooltipDirective],
   templateUrl: './shell.html',
 })
 export class ShellComponent {

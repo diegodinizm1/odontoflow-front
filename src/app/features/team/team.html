@@ -5,56 +5,49 @@
       <h1 class="page-title">Equipe</h1>
       <p class="page-sub">{{ members().length }} membro(s) na clínica</p>
     </div>
-    <button mat-flat-button color="primary" (click)="openInvite()">
-      <mat-icon>person_add</mat-icon>
+    <button class="btn btn-primary" (click)="openInvite()">
+      <span class="material-symbols-rounded">person_add</span>
       Convidar membro
     </button>
   </header>
 
   @if (loading()) {
-    <div class="flex justify-center py-20"><mat-spinner diameter="38" /></div>
+    <div class="flex justify-center py-20 text-brand-700"><app-spinner [size]="38" /></div>
   } @else {
     <div class="card overflow-hidden">
-      <table mat-table [dataSource]="members()" class="w-full">
-
-        <ng-container matColumnDef="member">
-          <th mat-header-cell *matHeaderCellDef>Membro</th>
-          <td mat-cell *matCellDef="let m">
-            <div class="flex items-center gap-3">
-              <span class="w-9 h-9 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center text-xs font-semibold shrink-0">
-                {{ initials(m.fullName) }}
-              </span>
-              <span class="font-medium text-ink">{{ m.fullName }}</span>
-              @if (isSelf(m)) { <span class="text-[11px] text-ink-faint">(você)</span> }
-            </div>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef>E-mail</th>
-          <td mat-cell *matCellDef="let m"><span class="text-ink-soft text-sm">{{ m.email }}</span></td>
-        </ng-container>
-
-        <ng-container matColumnDef="role">
-          <th mat-header-cell *matHeaderCellDef>Função</th>
-          <td mat-cell *matCellDef="let m">
-            <span class="charge-pill" [class]="m.role === 'DENTIST' ? 'charge-paid' : 'charge-pending'">{{ roleLabel(m.role) }}</span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let m" class="text-right">
-            @if (!isSelf(m)) {
-              <button mat-icon-button (click)="remove(m)" matTooltip="Remover">
-                <mat-icon class="text-ink-faint" style="font-size:19px">delete</mat-icon>
-              </button>
-            }
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="columns"></tr>
-        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Membro</th>
+            <th>E-mail</th>
+            <th>Função</th>
+            <th class="text-right"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of members(); track m.id) {
+            <tr>
+              <td>
+                <div class="flex items-center gap-3">
+                  <span class="w-9 h-9 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center text-xs font-semibold shrink-0">
+                    {{ initials(m.fullName) }}
+                  </span>
+                  <span class="font-medium text-ink">{{ m.fullName }}</span>
+                  @if (isSelf(m)) { <span class="text-[11px] text-ink-faint">(você)</span> }
+                </div>
+              </td>
+              <td><span class="text-ink-soft text-sm">{{ m.email }}</span></td>
+              <td><span class="charge-pill" [class]="m.role === 'DENTIST' ? 'charge-paid' : 'charge-pending'">{{ roleLabel(m.role) }}</span></td>
+              <td class="text-right">
+                @if (!isSelf(m)) {
+                  <button class="btn-icon" (click)="remove(m)" uiTooltip="Remover">
+                    <span class="material-symbols-rounded" style="font-size:19px">delete</span>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
       </table>
     </div>
   }

@@ -53,86 +53,96 @@
       <h1 class="font-display text-[28px] font-medium text-ink">Cadastre sua clínica</h1>
       <p class="text-ink-soft text-[15px] mt-1.5 mb-7">Dois passos rápidos para começar.</p>
 
-      <mat-stepper orientation="horizontal" linear #stepper>
+      <!-- Step indicator -->
+      <div class="flex items-center gap-2 mb-6">
+        <span class="flex items-center gap-2 text-sm font-semibold" [class.text-brand-700]="step() === 1" [class.text-ink-faint]="step() !== 1">
+          <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs"
+                [class.bg-brand-700]="step() === 1" [class.text-white]="step() === 1"
+                [class.bg-line]="step() !== 1">1</span>
+          Clínica
+        </span>
+        <span class="flex-1 h-px bg-line"></span>
+        <span class="flex items-center gap-2 text-sm font-semibold" [class.text-brand-700]="step() === 2" [class.text-ink-faint]="step() !== 2">
+          <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs"
+                [class.bg-brand-700]="step() === 2" [class.text-white]="step() === 2"
+                [class.bg-line]="step() !== 2">2</span>
+          Responsável
+        </span>
+      </div>
 
-        <mat-step [stepControl]="clinicForm" label="Clínica">
-          <form [formGroup]="clinicForm" class="flex flex-col pt-6">
-            <mat-form-field appearance="outline">
-              <mat-label>Nome da clínica</mat-label>
-              <input matInput formControlName="clinicName" placeholder="Ex: Sorriso Vivo Odontologia" />
-              @if (clinicForm.controls.clinicName.hasError('required')) {
-                <mat-error>Nome da clínica é obrigatório</mat-error>
-              }
-            </mat-form-field>
+      @if (step() === 1) {
+        <form [formGroup]="clinicForm" class="flex flex-col">
+          <div class="field">
+            <label class="field-label">Nome da clínica</label>
+            <input class="input" formControlName="clinicName" placeholder="Ex: Sorriso Vivo Odontologia" />
+            @if (clinicForm.controls.clinicName.invalid && clinicForm.controls.clinicName.touched) {
+              <span class="field-error">Nome da clínica é obrigatório</span>
+            }
+          </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>CNPJ / CPF</mat-label>
-              <input matInput formControlName="document" placeholder="00.000.000/0001-00" appMask="cpfCnpj" inputmode="numeric" maxlength="18" />
-              @if (clinicForm.controls.document.hasError('required')) {
-                <mat-error>Documento é obrigatório</mat-error>
-              }
-            </mat-form-field>
+          <div class="field">
+            <label class="field-label">CNPJ / CPF</label>
+            <input class="input" formControlName="document" placeholder="00.000.000/0001-00" appMask="cpfCnpj" inputmode="numeric" maxlength="18" />
+            @if (clinicForm.controls.document.invalid && clinicForm.controls.document.touched) {
+              <span class="field-error">Documento é obrigatório</span>
+            }
+          </div>
 
-            <div class="flex justify-end pt-1">
-              <button mat-flat-button color="primary" matStepperNext type="button" [disabled]="clinicForm.invalid">
-                Continuar
-                <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          <div class="flex justify-end pt-1">
+            <button class="btn btn-primary" type="button" (click)="next()" [disabled]="clinicForm.invalid">
+              Continuar
+              <span class="material-symbols-rounded">arrow_forward</span>
+            </button>
+          </div>
+        </form>
+      } @else {
+        <form [formGroup]="userForm" class="flex flex-col">
+          <div class="field">
+            <label class="field-label">Nome completo</label>
+            <input class="input" formControlName="fullName" placeholder="Dr(a). Nome Sobrenome" />
+            @if (userForm.controls.fullName.invalid && userForm.controls.fullName.touched) {
+              <span class="field-error">Nome completo é obrigatório</span>
+            }
+          </div>
+
+          <div class="field">
+            <label class="field-label">E-mail</label>
+            <input class="input" formControlName="email" type="email" autocomplete="email" placeholder="voce@clinica.com" />
+            @if (userForm.controls.email.hasError('required') && userForm.controls.email.touched) {
+              <span class="field-error">E-mail é obrigatório</span>
+            } @else if (userForm.controls.email.hasError('email') && userForm.controls.email.touched) {
+              <span class="field-error">E-mail inválido</span>
+            }
+          </div>
+
+          <div class="field">
+            <label class="field-label">Senha</label>
+            <div class="relative">
+              <input class="input pr-11" formControlName="password" [type]="hidePassword() ? 'password' : 'text'" autocomplete="new-password" />
+              <button type="button" tabindex="-1" class="btn-icon absolute right-1 top-1/2 -translate-y-1/2"
+                      (click)="hidePassword.set(!hidePassword())">
+                <span class="material-symbols-rounded">{{ hidePassword() ? 'visibility_off' : 'visibility' }}</span>
               </button>
             </div>
-          </form>
-        </mat-step>
+            <span class="field-hint">Mínimo de 8 caracteres</span>
+            @if (userForm.controls.password.hasError('required') && userForm.controls.password.touched) {
+              <span class="field-error">Senha é obrigatória</span>
+            } @else if (userForm.controls.password.hasError('minlength')) {
+              <span class="field-error">Mínimo de 8 caracteres</span>
+            }
+          </div>
 
-        <mat-step [stepControl]="userForm" label="Responsável">
-          <form [formGroup]="userForm" class="flex flex-col pt-6">
-            <mat-form-field appearance="outline">
-              <mat-label>Nome completo</mat-label>
-              <input matInput formControlName="fullName" placeholder="Dr(a). Nome Sobrenome" />
-              @if (userForm.controls.fullName.hasError('required')) {
-                <mat-error>Nome completo é obrigatório</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>E-mail</mat-label>
-              <input matInput formControlName="email" type="email" autocomplete="email" placeholder="voce@clinica.com" />
-              @if (userForm.controls.email.hasError('required')) {
-                <mat-error>E-mail é obrigatório</mat-error>
-              } @else if (userForm.controls.email.hasError('email')) {
-                <mat-error>E-mail inválido</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Senha</mat-label>
-              <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'" autocomplete="new-password" />
-              <button mat-icon-button matSuffix type="button" tabindex="-1" (click)="hidePassword.set(!hidePassword())">
-                <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-              </button>
-              <mat-hint>Mínimo de 8 caracteres</mat-hint>
-              @if (userForm.controls.password.hasError('required')) {
-                <mat-error>Senha é obrigatória</mat-error>
-              } @else if (userForm.controls.password.hasError('minlength')) {
-                <mat-error>Mínimo de 8 caracteres</mat-error>
-              }
-            </mat-form-field>
-
-            <div class="flex justify-between pt-3">
-              <button mat-stroked-button matStepperPrevious type="button">
-                <mat-icon>arrow_back</mat-icon>
-                Voltar
-              </button>
-              <button mat-flat-button color="primary" type="button" (click)="submit()" [disabled]="userForm.invalid || loading()">
-                @if (loading()) {
-                  <mat-spinner diameter="18" class="inline-spinner" />
-                } @else {
-                  Criar conta
-                }
-              </button>
-            </div>
-          </form>
-        </mat-step>
-
-      </mat-stepper>
+          <div class="flex justify-between pt-3">
+            <button class="btn btn-stroked" type="button" (click)="back()">
+              <span class="material-symbols-rounded">arrow_back</span>
+              Voltar
+            </button>
+            <button class="btn btn-primary" type="button" (click)="submit()" [disabled]="userForm.invalid || loading()">
+              @if (loading()) { <app-spinner [size]="18" /> } @else { Criar conta }
+            </button>
+          </div>
+        </form>
+      }
 
       <p class="text-center text-ink-soft mt-6 text-sm">
         Já tem uma conta?

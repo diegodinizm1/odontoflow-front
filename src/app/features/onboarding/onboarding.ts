@@ -1,12 +1,10 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { forkJoin } from 'rxjs';
 import { PatientService } from '../../core/services/patient.service';
 import { TeamService } from '../../core/services/team.service';
 import { BillingService } from '../../core/services/billing.service';
+import { SpinnerComponent } from '../../shared/ui/spinner';
 
 interface OnboardingStep {
   icon: string;
@@ -20,7 +18,7 @@ interface OnboardingStep {
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [RouterLink, SpinnerComponent],
   templateUrl: './onboarding.html',
 })
 export class OnboardingComponent implements OnInit {

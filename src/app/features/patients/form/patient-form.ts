@@ -1,24 +1,21 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PatientService } from '../../../core/services/patient.service';
 import { ApiError } from '../../../core/models/api-error.model';
 import { MaskDirective } from '../../../core/directives/mask.directive';
+import { DatepickerComponent } from '../../../shared/ui/datepicker';
+import { SpinnerComponent } from '../../../shared/ui/spinner';
+import { TooltipDirective } from '../../../shared/ui/tooltip.directive';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-patient-form',
   standalone: true,
   imports: [
-    ReactiveFormsModule, RouterLink,
-    MatInputModule, MatButtonModule, MatIconModule,
-    MatDatepickerModule, MatProgressSpinnerModule, MaskDirective,
+    ReactiveFormsModule, RouterLink, MaskDirective,
+    DatepickerComponent, SpinnerComponent, TooltipDirective,
   ],
   templateUrl: './patient-form.html',
 })
@@ -27,7 +24,7 @@ export class PatientFormComponent implements OnInit {
   private patientService = inject(PatientService);
   private router         = inject(Router);
   private route          = inject(ActivatedRoute);
-  private snackBar       = inject(MatSnackBar);
+  private toast          = inject(ToastService);
 
   readonly loading  = signal(false);
   readonly isEdit   = signal(false);
@@ -52,7 +49,7 @@ export class PatientFormComponent implements OnInit {
           dateOfBirth:   p.dateOfBirth ? new Date(p.dateOfBirth) : null,
           medicalAlerts: p.medicalAlerts ?? '',
         }),
-        error: () => { this.snackBar.open('Paciente não encontrado.', 'Fechar', { duration: 3000 }); this.router.navigate(['/patients']); },
+        error: () => { this.toast.open('Paciente não encontrado.', 'Fechar', { duration: 3000 }); this.router.navigate(['/patients']); },
       });
     }
   }
@@ -75,12 +72,12 @@ export class PatientFormComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
-        this.snackBar.open(this.isEdit() ? 'Paciente atualizado.' : 'Paciente cadastrado.', '', { duration: 3000 });
+        this.toast.open(this.isEdit() ? 'Paciente atualizado.' : 'Paciente cadastrado.', '', { duration: 3000 });
         this.router.navigate(['/patients']);
       },
       error: (err: HttpErrorResponse) => {
         const api = err.error as ApiError;
-        this.snackBar.open(api?.message ?? 'Erro ao salvar paciente.', 'Fechar', { duration: 4000 });
+        this.toast.open(api?.message ?? 'Erro ao salvar paciente.', 'Fechar', { duration: 4000 });
         this.loading.set(false);
       },
     });

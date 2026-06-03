@@ -7,7 +7,6 @@
 [![CI](https://github.com/diegodinizm1/odontoflow-front/actions/workflows/ci.yml/badge.svg)](https://github.com/diegodinizm1/odontoflow-front/actions/workflows/ci.yml)
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
-![Angular Material](https://img.shields.io/badge/Angular%20Material-M2-757575?logo=angular&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
 ![Tests](https://img.shields.io/badge/tests-unit%20%2B%20e2e-success)
 ![License](https://img.shields.io/badge/license-MIT-blue)
@@ -63,7 +62,7 @@ The frontend for **OdontoFlow**, a B2B platform for dental clinics. It pairs wit
 |------|-----------|
 | Framework | Angular 21 (standalone components, **signals**) |
 | Language | TypeScript |
-| UI | Angular Material (M2) + Tailwind CSS v3 |
+| UI | Custom component kit (no UI framework) + Tailwind CSS v3 |
 | Type & icons | Fraunces · Hanken Grotesk · Material Symbols Rounded |
 | State | Signals + `model()` two-way binding |
 | HTTP | `HttpClient`, functional interceptor (JWT), route guards |
@@ -75,7 +74,7 @@ The frontend for **OdontoFlow**, a B2B platform for dental clinics. It pairs wit
 - **`authInterceptor`** attaches the JWT to API calls only — pre-signed storage URLs keep their own signature.
 - **`authGuard`** protects the app shell; the JWT is decoded client-side for `role`/`tenant_id`.
 - **Feature-first structure** with a shared `core/` (models, services, guards, interceptors).
-- **Design system in one place** — `styles.scss` defines the Material theme, design tokens and component primitives.
+- **Design system in one place** — `styles.scss` defines the design tokens and component primitives; reusable UI (select, datepicker, dialog, toast, menu, spinner, tooltip) lives in `shared/ui`, built from scratch with no UI framework.
 
 ```
 src/app
@@ -94,7 +93,7 @@ src/app
 │   ├── billing/       # plans & invoices
 │   ├── team/          # members
 │   └── onboarding/    # post-register checklist
-└── styles.scss        # design system (Material theme + tokens)
+└── styles.scss        # design system (tokens + component styles)
 ```
 
 ## Getting started

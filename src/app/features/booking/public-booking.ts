@@ -1,29 +1,23 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PublicClinic } from '../../core/models/public-booking.model';
 import { PublicBookingService } from '../../core/services/public-booking.service';
 import { ApiError } from '../../core/models/api-error.model';
 import { MaskDirective } from '../../core/directives/mask.directive';
 import { dateOnlyIso } from '../../core/utils/datetime.util';
+import { SelectComponent } from '../../shared/ui/select';
+import { DatepickerComponent } from '../../shared/ui/datepicker';
+import { SpinnerComponent } from '../../shared/ui/spinner';
+import { ToastService } from '../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-public-booking',
   standalone: true,
   imports: [
     ReactiveFormsModule, MaskDirective,
-    MatFormFieldModule, MatInputModule, MatSelectModule, MatDatepickerModule,
-    MatNativeDateModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule,
+    SelectComponent, DatepickerComponent, SpinnerComponent,
   ],
   templateUrl: './public-booking.html',
 })
@@ -31,7 +25,7 @@ export class PublicBookingComponent implements OnInit {
   private route    = inject(ActivatedRoute);
   private service  = inject(PublicBookingService);
   private fb       = inject(FormBuilder);
-  private snackBar = inject(MatSnackBar);
+  private toast    = inject(ToastService);
 
   private slug = '';
 
@@ -52,6 +46,8 @@ export class PublicBookingComponent implements OnInit {
   readonly canPickSlot = computed(() => !!this.dentistId() && !!this.date());
   readonly dentistName = computed(() =>
     this.clinic()?.dentists.find(d => d.id === this.dentistId())?.fullName ?? '');
+  readonly dentistOptions = computed(() =>
+    (this.clinic()?.dentists ?? []).map(d => ({ value: d.id, label: d.fullName })));
 
   contact = this.fb.nonNullable.group({
     patientName:  ['', Validators.required],
@@ -110,7 +106,7 @@ export class PublicBookingComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         const api = err.error as ApiError;
-        this.snackBar.open(api?.message ?? 'Não foi possível agendar. Tente outro horário.', 'Fechar', { duration: 4000 });
+        this.toast.open(api?.message ?? 'Não foi possível agendar. Tente outro horário.', 'Fechar', { duration: 4000 });
         this.booking.set(false);
         this.refreshSlots(); // the slot may have just been taken
       },

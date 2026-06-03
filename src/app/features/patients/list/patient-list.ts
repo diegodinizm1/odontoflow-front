@@ -2,28 +2,21 @@ import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { Patient } from '../../../core/models/patient.model';
 import { PatientService } from '../../../core/services/patient.service';
+import { SpinnerComponent } from '../../../shared/ui/spinner';
+import { TooltipDirective } from '../../../shared/ui/tooltip.directive';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
 
 @Component({
   selector: 'app-patient-list',
   standalone: true,
-  imports: [
-    RouterLink, DatePipe, FormsModule,
-    MatTableModule, MatButtonModule, MatIconModule,
-    MatProgressSpinnerModule, MatTooltipModule,
-  ],
+  imports: [RouterLink, DatePipe, FormsModule, SpinnerComponent, TooltipDirective],
   templateUrl: './patient-list.html',
 })
 export class PatientListComponent implements OnInit {
   private patientService = inject(PatientService);
-  private snackBar       = inject(MatSnackBar);
+  private toast          = inject(ToastService);
 
   readonly patients = signal<Patient[]>([]);
   readonly loading  = signal(true);
@@ -46,7 +39,7 @@ export class PatientListComponent implements OnInit {
     this.loading.set(true);
     this.patientService.list().subscribe({
       next: data => { this.patients.set(data); this.loading.set(false); },
-      error: ()   => { this.snackBar.open('Erro ao carregar pacientes.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
+      error: ()   => { this.toast.open('Erro ao carregar pacientes.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
     });
   }
 
@@ -55,9 +48,9 @@ export class PatientListComponent implements OnInit {
     this.patientService.delete(patient.id).subscribe({
       next: () => {
         this.patients.update(list => list.filter(p => p.id !== patient.id));
-        this.snackBar.open('Paciente removido.', '', { duration: 3000 });
+        this.toast.open('Paciente removido.', '', { duration: 3000 });
       },
-      error: () => this.snackBar.open('Erro ao remover paciente.', 'Fechar', { duration: 3000 }),
+      error: () => this.toast.open('Erro ao remover paciente.', 'Fechar', { duration: 3000 }),
     });
   }
 

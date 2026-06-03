@@ -7,7 +7,6 @@
 [![CI](https://github.com/diegodinizm1/odontoflow-front/actions/workflows/ci.yml/badge.svg)](https://github.com/diegodinizm1/odontoflow-front/actions/workflows/ci.yml)
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
-![Angular Material](https://img.shields.io/badge/Angular%20Material-M2-757575?logo=angular&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
 ![Testes](https://img.shields.io/badge/testes-unit%20%2B%20e2e-success)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)
@@ -63,7 +62,7 @@ O frontend do **OdontoFlow**, uma plataforma B2B para clínicas odontológicas. 
 |------|-----------|
 | Framework | Angular 21 (standalone components, **signals**) |
 | Linguagem | TypeScript |
-| UI | Angular Material (M2) + Tailwind CSS v3 |
+| UI | Kit de componentes próprio (sem framework de UI) + Tailwind CSS v3 |
 | Tipografia & ícones | Fraunces · Hanken Grotesk · Material Symbols Rounded |
 | Estado | Signals + two-way binding com `model()` |
 | HTTP | `HttpClient`, interceptor funcional (JWT), guards de rota |
@@ -75,7 +74,7 @@ O frontend do **OdontoFlow**, uma plataforma B2B para clínicas odontológicas. 
 - **`authInterceptor`** anexa o JWT apenas às chamadas da API — as Pre-Signed URLs do storage mantêm a própria assinatura.
 - **`authGuard`** protege o shell; o JWT é decodificado no cliente para obter `role`/`tenant_id`.
 - **Estrutura por feature** com um `core/` compartilhado (models, services, guards, interceptors).
-- **Design system num só lugar** — `styles.scss` define o tema do Material, os tokens e os componentes-base.
+- **Design system num só lugar** — `styles.scss` define os tokens e os componentes-base; a UI reutilizável (select, datepicker, dialog, toast, menu, spinner, tooltip) fica em `shared/ui`, construída do zero sem framework de UI.
 
 ```
 src/app
@@ -94,7 +93,7 @@ src/app
 │   ├── billing/       # planos & faturas
 │   ├── team/          # membros
 │   └── onboarding/    # checklist pós-cadastro
-└── styles.scss        # design system (tema Material + tokens)
+└── styles.scss        # design system (tokens + estilos dos componentes)
 ```
 
 ## Como rodar

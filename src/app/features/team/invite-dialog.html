@@ -1,54 +1,57 @@
 <div class="appt-dialog">
   <div class="flex items-center justify-between mb-4">
     <h2 class="font-display text-xl text-ink m-0">Convidar membro</h2>
-    <button mat-icon-button (click)="close()" tabindex="-1">
-      <mat-icon class="text-ink-faint">close</mat-icon>
+    <button type="button" class="btn-icon" (click)="close()" tabindex="-1">
+      <span class="material-symbols-rounded">close</span>
     </button>
   </div>
 
   <form [formGroup]="form" class="flex flex-col">
-    <mat-form-field appearance="outline">
-      <mat-label>Nome completo</mat-label>
-      <input matInput formControlName="fullName" />
-      @if (form.controls.fullName.hasError('required')) { <mat-error>Nome é obrigatório</mat-error> }
-    </mat-form-field>
+    <div class="field">
+      <label class="field-label">Nome completo</label>
+      <input class="input" formControlName="fullName" />
+      @if (form.controls.fullName.invalid && form.controls.fullName.touched) {
+        <span class="field-error">Nome é obrigatório</span>
+      }
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>E-mail</mat-label>
-      <input matInput formControlName="email" type="email" />
-      @if (form.controls.email.hasError('required')) {
-        <mat-error>E-mail é obrigatório</mat-error>
+    <div class="field">
+      <label class="field-label">E-mail</label>
+      <input class="input" formControlName="email" type="email" />
+      @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+        <span class="field-error">E-mail é obrigatório</span>
       } @else if (form.controls.email.hasError('email')) {
-        <mat-error>E-mail inválido</mat-error>
+        <span class="field-error">E-mail inválido</span>
       }
-    </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Função</mat-label>
-      <mat-select formControlName="role">
-        <mat-option value="DENTIST">Dentista</mat-option>
-        <mat-option value="RECEPTIONIST">Recepcionista</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="field">
+      <label class="field-label">Função</label>
+      <app-select formControlName="role" [options]="roleOptions" />
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Senha provisória</mat-label>
-      <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'" />
-      <button mat-icon-button matSuffix type="button" tabindex="-1" (click)="hidePassword.set(!hidePassword())">
-        <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-      </button>
-      <mat-hint>Compartilhe com o membro; ele poderá alterá-la depois.</mat-hint>
-      @if (form.controls.password.hasError('required')) {
-        <mat-error>Senha é obrigatória</mat-error>
+    <div class="field">
+      <label class="field-label">Senha provisória</label>
+      <div class="relative">
+        <input class="input pr-11" formControlName="password" [type]="hidePassword() ? 'password' : 'text'" />
+        <button type="button" tabindex="-1"
+                class="btn-icon absolute right-1 top-1/2 -translate-y-1/2"
+                (click)="hidePassword.set(!hidePassword())">
+          <span class="material-symbols-rounded">{{ hidePassword() ? 'visibility_off' : 'visibility' }}</span>
+        </button>
+      </div>
+      <span class="field-hint">Compartilhe com o membro; ele poderá alterá-la depois.</span>
+      @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+        <span class="field-error">Senha é obrigatória</span>
       } @else if (form.controls.password.hasError('minlength')) {
-        <mat-error>Mínimo de 8 caracteres</mat-error>
+        <span class="field-error">Mínimo de 8 caracteres</span>
       }
-    </mat-form-field>
+    </div>
 
     <div class="flex justify-end gap-2 pt-2">
-      <button mat-stroked-button type="button" (click)="close()">Cancelar</button>
-      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="form.invalid || loading()">
-        @if (loading()) { <mat-spinner diameter="18" class="inline-spinner" /> } @else { Convidar }
+      <button type="button" class="btn btn-stroked" (click)="close()">Cancelar</button>
+      <button type="button" class="btn btn-primary" (click)="save()" [disabled]="form.invalid || loading()">
+        @if (loading()) { <app-spinner [size]="18" /> } @else { Convidar }
       </button>
     </div>
   </form>

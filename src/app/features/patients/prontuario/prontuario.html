@@ -2,8 +2,8 @@
 
   <!-- Header -->
   <header class="flex items-center gap-3 mb-6">
-    <a mat-icon-button routerLink="/patients" matTooltip="Voltar">
-      <mat-icon class="text-ink-soft">arrow_back</mat-icon>
+    <a class="btn-icon" routerLink="/patients" uiTooltip="Voltar">
+      <span class="material-symbols-rounded">arrow_back</span>
     </a>
     <div class="flex-1 min-w-0">
       <h1 class="page-title truncate">{{ patient()?.fullName ?? 'Prontuário' }}</h1>
@@ -11,8 +11,8 @@
         @if (age() !== null) { {{ age() }} anos · } Prontuário clínico
       </p>
     </div>
-    <a mat-stroked-button [routerLink]="['/patients', patient()?.id, 'edit']" [disabled]="!patient()">
-      <mat-icon>edit</mat-icon> Editar cadastro
+    <a class="btn btn-stroked" [class.is-disabled]="!patient()" [routerLink]="['/patients', patient()?.id, 'edit']">
+      <span class="material-symbols-rounded">edit</span> Editar cadastro
     </a>
   </header>
 
@@ -27,7 +27,7 @@
   }
 
   @if (loading()) {
-    <div class="flex justify-center py-24"><mat-spinner diameter="38" /></div>
+    <div class="flex justify-center py-24 text-brand-700"><app-spinner [size]="38" /></div>
   } @else {
 
     <!-- Odontogram -->
@@ -50,10 +50,10 @@
         </div>
         <label class="upload-btn" [class.is-uploading]="uploading()">
           @if (uploading()) {
-            <mat-spinner diameter="16" />
+            <app-spinner [size]="16" />
             Enviando…
           } @else {
-            <mat-icon style="font-size:18px">upload</mat-icon>
+            <span class="material-symbols-rounded" style="font-size:18px">upload</span>
             Enviar exame
           }
           <input type="file" multiple accept="image/*,application/pdf" hidden
@@ -71,8 +71,8 @@
                 <span class="material-symbols-rounded" style="font-size:30px">description</span>
               }
             </a>
-            <button class="file-del" (click)="removeFile(f)" matTooltip="Remover">
-              <mat-icon style="font-size:16px">close</mat-icon>
+            <button class="file-del" (click)="removeFile(f)" uiTooltip="Remover">
+              <span class="material-symbols-rounded" style="font-size:16px">close</span>
             </button>
             <div class="file-meta">
               <span class="file-name">{{ f.fileName }}</span>
@@ -97,8 +97,8 @@
           <h2 class="font-display text-lg text-ink">Plano de tratamento</h2>
           <p class="text-sm text-ink-soft">{{ plans().length }} plano(s)</p>
         </div>
-        <button mat-flat-button color="primary" (click)="openCreatePlan()">
-          <mat-icon>add</mat-icon> Novo plano
+        <button class="btn btn-primary" (click)="openCreatePlan()">
+          <span class="material-symbols-rounded">add</span> Novo plano
         </button>
       </div>
 
@@ -122,13 +122,16 @@
                 <div class="flex items-center gap-2 shrink-0">
                   <span class="font-display text-lg text-ink">{{ plan.total | currency:'BRL' }}</span>
                   @if (plan.status !== 'COMPLETED' && plan.status !== 'CANCELED') {
-                    <button mat-icon-button [matMenuTriggerFor]="planMenu"><mat-icon class="text-ink-faint">more_vert</mat-icon></button>
-                    <mat-menu #planMenu="matMenu">
+                    <app-menu align="right">
                       @if (plan.status === 'PROPOSED') {
-                        <button mat-menu-item (click)="setPlanStatus(plan, 'ACCEPTED')"><mat-icon>check_circle</mat-icon><span>Marcar como aceito</span></button>
+                        <button class="ui-menu-item" (click)="setPlanStatus(plan, 'ACCEPTED')">
+                          <span class="material-symbols-rounded">check_circle</span> Marcar como aceito
+                        </button>
                       }
-                      <button mat-menu-item (click)="setPlanStatus(plan, 'CANCELED')"><mat-icon>cancel</mat-icon><span>Cancelar plano</span></button>
-                    </mat-menu>
+                      <button class="ui-menu-item is-danger" (click)="setPlanStatus(plan, 'CANCELED')">
+                        <span class="material-symbols-rounded">cancel</span> Cancelar plano
+                      </button>
+                    </app-menu>
                   }
                 </div>
               </div>
@@ -145,7 +148,7 @@
                     </div>
                     <span class="text-sm font-medium text-ink shrink-0">{{ item.amount | currency:'BRL' }}</span>
                     @if (item.status === 'PENDING' && plan.status !== 'CANCELED') {
-                      <button mat-stroked-button class="shrink-0" (click)="completeItem(plan, item)">Concluir</button>
+                      <button class="btn btn-stroked shrink-0 h-9 px-3" (click)="completeItem(plan, item)">Concluir</button>
                     } @else if (item.status === 'DONE') {
                       <span class="charge-pill charge-paid shrink-0">Concluído</span>
                     }
@@ -163,15 +166,15 @@
       <h2 class="font-display text-lg text-ink mb-1">Nova evolução</h2>
       <p class="text-sm text-ink-soft mb-4">Salva o estado atual do odontograma junto com a nota clínica.</p>
       <textarea
+        class="textarea"
         [ngModel]="note()"
         (ngModelChange)="note.set($event)"
         rows="3"
-        placeholder="Descreva o procedimento realizado…"
-        class="w-full rounded-xl border border-line bg-surface p-3.5 text-sm text-ink placeholder:text-ink-faint focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none transition resize-y"></textarea>
+        placeholder="Descreva o procedimento realizado…"></textarea>
       <div class="flex justify-end mt-4">
-        <button mat-flat-button color="primary" (click)="save()" [disabled]="saving()">
-          @if (saving()) { <mat-spinner diameter="18" class="inline-spinner" /> }
-          @else { <mat-icon>save</mat-icon> }
+        <button class="btn btn-primary" (click)="save()" [disabled]="saving()">
+          @if (saving()) { <app-spinner [size]="18" /> }
+          @else { <span class="material-symbols-rounded">save</span> }
           Salvar evolução
         </button>
       </div>

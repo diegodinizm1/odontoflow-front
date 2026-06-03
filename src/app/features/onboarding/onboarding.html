@@ -9,7 +9,7 @@
   </div>
 
   @if (loading()) {
-    <div class="flex justify-center py-16"><mat-spinner diameter="38" /></div>
+    <div class="flex justify-center py-16 text-brand-700"><app-spinner [size]="38" /></div>
   } @else {
 
     <!-- progress -->
@@ -33,7 +33,7 @@
             <p class="text-sm text-ink-soft">{{ step.description }}</p>
           </div>
           @if (!step.done) {
-            <a mat-stroked-button [routerLink]="step.route">{{ step.cta }}</a>
+            <a class="btn btn-stroked" [routerLink]="step.route">{{ step.cta }}</a>
           } @else {
             <span class="text-sm font-semibold text-brand-700 flex items-center gap-1">
               <span class="material-symbols-rounded" style="font-size:18px">task_alt</span> Feito
@@ -44,9 +44,9 @@
     </div>
 
     <div class="flex justify-center mt-8">
-      <a mat-flat-button color="primary" routerLink="/inicio" class="px-8 h-11">
+      <a class="btn btn-primary px-8" routerLink="/inicio">
         {{ allDone() ? 'Tudo pronto — ir para a agenda' : 'Começar a usar' }}
-        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+        <span class="material-symbols-rounded">arrow_forward</span>
       </a>
     </div>
 

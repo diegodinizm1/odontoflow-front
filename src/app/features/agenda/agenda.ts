@@ -1,13 +1,5 @@
 import { Component, signal, computed, inject, OnInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Appointment } from '../../core/models/appointment.model';
@@ -20,29 +12,34 @@ import {
   addDays, dateOnlyIso, dayIndex, decimalHour, formatLocal, parseLocal, sameDay, startOfDayIso, startOfWeek,
 } from '../../core/utils/datetime.util';
 import { AppointmentDialogComponent, AppointmentDialogData } from './dialog/appointment-dialog';
+import { DialogService } from '../../shared/ui/dialog/dialog.service';
+import { ToastService } from '../../shared/ui/toast/toast.service';
+import { SelectComponent } from '../../shared/ui/select';
+import { SpinnerComponent } from '../../shared/ui/spinner';
+import { TooltipDirective } from '../../shared/ui/tooltip.directive';
 
 @Component({
   selector: 'app-agenda',
   standalone: true,
-  imports: [
-    DatePipe, DragDropModule,
-    MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule,
-    MatFormFieldModule, MatSelectModule,
-  ],
+  imports: [DatePipe, DragDropModule, SelectComponent, SpinnerComponent, TooltipDirective],
   templateUrl: './agenda.html',
 })
 export class AgendaComponent implements OnInit {
   private service  = inject(AppointmentService);
   private auth     = inject(AuthService);
   private team     = inject(TeamService);
-  private dialog   = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
+  private dialog   = inject(DialogService);
+  private toast    = inject(ToastService);
 
   // Dentists only ever see their own agenda (the API scopes it); receptionists
   // see everyone and can narrow the view to a single dentist.
   readonly isReceptionist = computed(() => this.auth.currentUser()?.role === 'RECEPTIONIST');
   readonly dentists = signal<TeamMember[]>([]);
   readonly selectedDentistId = signal<string | null>(null);
+  readonly dentistFilterOptions = computed(() => [
+    { value: null, label: 'Todos os dentistas' },
+    ...this.dentists().map(d => ({ value: d.id, label: d.fullName })),
+  ]);
 
   @ViewChildren('dayColEl') dayCols!: QueryList<ElementRef<HTMLElement>>;
 
@@ -89,7 +86,7 @@ export class AgendaComponent implements OnInit {
     const end = startOfDayIso(addDays(this.weekStart(), 6));
     this.service.list(start, end, this.selectedDentistId()).subscribe({
       next: data => { this.appointments.set(data); this.loading.set(false); },
-      error: () => { this.snackBar.open('Erro ao carregar a agenda.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
+      error: () => { this.toast.open('Erro ao carregar a agenda.', 'Fechar'); this.loading.set(false); },
     });
   }
 
@@ -162,17 +159,17 @@ export class AgendaComponent implements OnInit {
     if (startIso === appt.startTime) return; // no effective change
 
     this.service.reschedule(appt.id, { startTime: startIso, endTime: formatLocal(newEnd) }).subscribe({
-      next: () => { this.snackBar.open('Consulta reagendada.', '', { duration: 2500 }); this.load(); },
+      next: () => { this.toast.open('Consulta reagendada.', '', { duration: 2500 }); this.load(); },
       error: (err: HttpErrorResponse) => {
         const api = err.error as ApiError;
-        this.snackBar.open(api?.message ?? 'Não foi possível reagendar.', 'Fechar', { duration: 4000 });
+        this.toast.open(api?.message ?? 'Não foi possível reagendar.', 'Fechar', { duration: 4000 });
         this.load();
       },
     });
   }
 
   private openDialog(data: AppointmentDialogData) {
-    this.dialog.open(AppointmentDialogComponent, { data, width: '460px', autoFocus: false })
+    this.dialog.open(AppointmentDialogComponent, { data, width: '460px' })
       .afterClosed().subscribe(changed => { if (changed) this.load(); });
   }
 }

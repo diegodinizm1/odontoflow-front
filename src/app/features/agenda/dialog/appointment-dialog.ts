@@ -1,14 +1,5 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Patient } from '../../../core/models/patient.model';
 import { Appointment } from '../../../core/models/appointment.model';
@@ -19,6 +10,11 @@ import { AuthService } from '../../../core/services/auth.service';
 import { TeamService } from '../../../core/services/team.service';
 import { ApiError } from '../../../core/models/api-error.model';
 import { addMinutesToTime, timeOf, toLocalIso } from '../../../core/utils/datetime.util';
+import { DIALOG_DATA, DialogRef } from '../../../shared/ui/dialog/dialog.tokens';
+import { ToastService } from '../../../shared/ui/toast/toast.service';
+import { SelectComponent } from '../../../shared/ui/select';
+import { DatepickerComponent } from '../../../shared/ui/datepicker';
+import { SpinnerComponent } from '../../../shared/ui/spinner';
 
 export interface AppointmentDialogData {
   appointment?: Appointment;
@@ -30,10 +26,7 @@ export interface AppointmentDialogData {
 @Component({
   selector: 'app-appointment-dialog',
   standalone: true,
-  imports: [
-    ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule,
-    MatSelectModule, MatDatepickerModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule,
-  ],
+  imports: [ReactiveFormsModule, SelectComponent, DatepickerComponent, SpinnerComponent],
   templateUrl: './appointment-dialog.html',
 })
 export class AppointmentDialogComponent implements OnInit {
@@ -42,15 +35,21 @@ export class AppointmentDialogComponent implements OnInit {
   private service  = inject(AppointmentService);
   private auth     = inject(AuthService);
   private team     = inject(TeamService);
-  private snackBar = inject(MatSnackBar);
-  private ref      = inject(MatDialogRef<AppointmentDialogComponent>);
-  readonly data: AppointmentDialogData = inject(MAT_DIALOG_DATA);
+  private toast    = inject(ToastService);
+  private ref      = inject(DialogRef);
+  readonly data: AppointmentDialogData = inject(DIALOG_DATA) as AppointmentDialogData;
 
   readonly loading     = signal(false);
   readonly patientList = signal<Patient[]>([]);
   readonly dentists    = signal<TeamMember[]>([]);
   readonly isEdit      = signal(false);
   readonly times       = this.buildTimes();
+  readonly timeOptions = this.times.map(t => ({ value: t, label: t }));
+
+  readonly patientOptions = computed(() =>
+    this.patientList().map(p => ({ value: p.id, label: p.fullName })));
+  readonly dentistOptions = computed(() =>
+    this.dentists().map(d => ({ value: d.id, label: d.fullName })));
 
   // Receptionists must pick the dentist; dentists implicitly schedule for themselves.
   readonly isReceptionist = computed(() => this.auth.currentUser()?.role === 'RECEPTIONIST');
@@ -103,7 +102,7 @@ export class AppointmentDialogComponent implements OnInit {
     if (this.form.invalid || this.loading()) return;
     const v = this.form.getRawValue();
     if (v.endTime <= v.startTime) {
-      this.snackBar.open('O término deve ser após o início.', 'Fechar', { duration: 3000 });
+      this.toast.open('O término deve ser após o início.', 'Fechar');
       return;
     }
     const date = v.date!;
@@ -117,10 +116,10 @@ export class AppointmentDialogComponent implements OnInit {
       : this.service.create({ patientId: v.patientId, dentistId: v.dentistId || null, startTime, endTime });
 
     req$.subscribe({
-      next: () => { this.snackBar.open(appt ? 'Consulta reagendada.' : 'Consulta agendada.', '', { duration: 3000 }); this.ref.close(true); },
+      next: () => { this.toast.open(appt ? 'Consulta reagendada.' : 'Consulta agendada.'); this.ref.close(true); },
       error: (err: HttpErrorResponse) => {
         const api = err.error as ApiError;
-        this.snackBar.open(api?.message ?? 'Erro ao salvar consulta.', 'Fechar', { duration: 4000 });
+        this.toast.open(api?.message ?? 'Erro ao salvar consulta.', 'Fechar', { duration: 4000 });
         this.loading.set(false);
       },
     });
@@ -131,8 +130,8 @@ export class AppointmentDialogComponent implements OnInit {
     if (!appt || !confirm('Cancelar esta consulta?')) return;
     this.loading.set(true);
     this.service.updateStatus(appt.id, 'CANCELED').subscribe({
-      next: () => { this.snackBar.open('Consulta cancelada.', '', { duration: 3000 }); this.ref.close(true); },
-      error: () => { this.snackBar.open('Erro ao cancelar.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
+      next: () => { this.toast.open('Consulta cancelada.'); this.ref.close(true); },
+      error: () => { this.toast.open('Erro ao cancelar.', 'Fechar'); this.loading.set(false); },
     });
   }
 
@@ -141,8 +140,8 @@ export class AppointmentDialogComponent implements OnInit {
     if (!appt) return;
     this.loading.set(true);
     this.service.updateStatus(appt.id, 'COMPLETED').subscribe({
-      next: () => { this.snackBar.open('Consulta concluída.', '', { duration: 3000 }); this.ref.close(true); },
-      error: () => { this.snackBar.open('Erro ao concluir.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
+      next: () => { this.toast.open('Consulta concluída.'); this.ref.close(true); },
+      error: () => { this.toast.open('Erro ao concluir.', 'Fechar'); this.loading.set(false); },
     });
   }
 
@@ -152,8 +151,8 @@ export class AppointmentDialogComponent implements OnInit {
     if (!appt) return;
     this.loading.set(true);
     this.service.updateStatus(appt.id, 'SCHEDULED').subscribe({
-      next: () => { this.snackBar.open('Solicitação confirmada.', '', { duration: 3000 }); this.ref.close(true); },
-      error: () => { this.snackBar.open('Erro ao confirmar.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
+      next: () => { this.toast.open('Solicitação confirmada.'); this.ref.close(true); },
+      error: () => { this.toast.open('Erro ao confirmar.', 'Fechar'); this.loading.set(false); },
     });
   }
 
@@ -162,8 +161,8 @@ export class AppointmentDialogComponent implements OnInit {
     if (!appt || !confirm('Recusar esta solicitação de agendamento?')) return;
     this.loading.set(true);
     this.service.updateStatus(appt.id, 'CANCELED').subscribe({
-      next: () => { this.snackBar.open('Solicitação recusada.', '', { duration: 3000 }); this.ref.close(true); },
-      error: () => { this.snackBar.open('Erro ao recusar.', 'Fechar', { duration: 3000 }); this.loading.set(false); },
+      next: () => { this.toast.open('Solicitação recusada.'); this.ref.close(true); },
+      error: () => { this.toast.open('Erro ao recusar.', 'Fechar'); this.loading.set(false); },
     });
   }
 
