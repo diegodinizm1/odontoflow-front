@@ -11,6 +11,9 @@
         @if (age() !== null) { {{ age() }} anos · } Prontuário clínico
       </p>
     </div>
+    <button type="button" class="btn btn-stroked" [disabled]="!patient()" (click)="openCharge()">
+      <span class="material-symbols-rounded">receipt_long</span> Nova cobrança
+    </button>
     <a class="btn btn-stroked" [class.is-disabled]="!patient()" [routerLink]="['/patients', patient()?.id, 'edit']">
       <span class="material-symbols-rounded">edit</span> Editar cadastro
     </a>

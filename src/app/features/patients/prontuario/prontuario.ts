@@ -15,6 +15,7 @@ import { PatientFileService } from '../../../core/services/patient-file.service'
 import { TreatmentService } from '../../../core/services/treatment.service';
 import { OdontogramComponent } from './odontogram';
 import { TreatmentPlanDialogComponent } from './treatment-plan-dialog';
+import { ChargeDialogComponent } from '../../financial/charge-dialog';
 import { DialogService } from '../../../shared/ui/dialog/dialog.service';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { SpinnerComponent } from '../../../shared/ui/spinner';
@@ -158,6 +159,15 @@ export class ProntuarioComponent implements OnInit {
     this.treatments.list(this.patientId).subscribe({
       next: list => this.plans.set(list),
       error: () => {},
+    });
+  }
+
+  openCharge() {
+    const p = this.patient();
+    if (!p) return;
+    this.dialog.open(ChargeDialogComponent, {
+      width: '440px',
+      data: { patientId: p.id, patientName: p.fullName },
     });
   }
 

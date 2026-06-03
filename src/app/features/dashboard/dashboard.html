@@ -31,16 +31,18 @@
         <p class="kpi-value">{{ d.appointmentsToday }}</p>
         <p class="kpi-label">Consultas hoje</p>
       </div>
-      <div class="card p-5">
-        <div class="kpi-icon bg-emerald-50 text-emerald-700"><span class="material-symbols-rounded">payments</span></div>
-        <p class="kpi-value">{{ d.paidThisMonth | currency:'BRL' }}</p>
-        <p class="kpi-label">Recebido no mês</p>
-      </div>
-      <div class="card p-5">
-        <div class="kpi-icon bg-alert-bg text-alert-fg"><span class="material-symbols-rounded">schedule</span></div>
-        <p class="kpi-value">{{ d.pendingTotal | currency:'BRL' }}</p>
-        <p class="kpi-label">Pendente</p>
-      </div>
+      @if (isDentist()) {
+        <div class="card p-5">
+          <div class="kpi-icon bg-emerald-50 text-emerald-700"><span class="material-symbols-rounded">payments</span></div>
+          <p class="kpi-value">{{ d.paidThisMonth | currency:'BRL' }}</p>
+          <p class="kpi-label">Recebido no mês</p>
+        </div>
+        <div class="card p-5">
+          <div class="kpi-icon bg-alert-bg text-alert-fg"><span class="material-symbols-rounded">schedule</span></div>
+          <p class="kpi-value">{{ d.pendingTotal | currency:'BRL' }}</p>
+          <p class="kpi-label">Pendente</p>
+        </div>
+      }
     </div>
 
     <!-- Online booking link + pending requests -->

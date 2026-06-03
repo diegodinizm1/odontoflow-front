@@ -46,6 +46,7 @@ O frontend do **OdontoFlow**, uma plataforma B2B para clínicas odontológicas. 
 
 - 📊 **Dashboard** — visão geral inicial com cards de KPI (pacientes, consultas de hoje, faturamento do mês, pendente) e a agenda do dia.
 - 🔐 **Autenticação & onboarding** — login e cadastro da clínica em duas etapas, seguidos de um checklist guiado de configuração.
+- 🛡️ **Acesso por papel** — recepcionistas não veem Financeiro, Equipe nem Assinatura (ocultos no menu e bloqueados por guard de rota); ainda podem criar cobranças a partir do prontuário do paciente.
 - 📅 **Agenda** — calendário semanal com blocos de consulta que você pode **arrastar e soltar para reagendar** (com checagem de sobreposição no servidor), criar e cancelar. **Sensível ao papel**: dentistas veem apenas a própria agenda, recepcionistas veem todas e ganham um filtro por dentista.
 - 🛎️ **Serviços** — gerencie os procedimentos da clínica por área da odontologia (nome, área, duração, preço) e defina quais dentistas realizam cada um; o paciente escolhe entre eles ao agendar online.
 - 🌐 **Agendamento online público (marketplace)** — um diretório sem login (`/agendar`) lista todas as clínicas; o perfil de cada clínica (`/agendar/:slug`) permite escolher um **procedimento** (agrupado por área), então apenas os dentistas que o realizam, um dia e um horário livre. As solicitações aparecem como **pendentes** na agenda para a clínica confirmar ou recusar, e o dashboard oferece um link compartilhável para copiar.

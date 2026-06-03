@@ -7,13 +7,20 @@
   </div>
 
   <form [formGroup]="form" class="flex flex-col">
-    <div class="field">
-      <label class="field-label">Paciente</label>
-      <app-select formControlName="patientId" [options]="patientOptions()" placeholder="Selecione um paciente" />
-      @if (form.controls.patientId.invalid && form.controls.patientId.touched) {
-        <span class="field-error">Selecione um paciente</span>
-      }
-    </div>
+    @if (lockedPatientName()) {
+      <div class="field">
+        <label class="field-label">Paciente</label>
+        <div class="input flex items-center text-ink-soft">{{ lockedPatientName() }}</div>
+      </div>
+    } @else {
+      <div class="field">
+        <label class="field-label">Paciente</label>
+        <app-select formControlName="patientId" [options]="patientOptions()" placeholder="Selecione um paciente" />
+        @if (form.controls.patientId.invalid && form.controls.patientId.touched) {
+          <span class="field-error">Selecione um paciente</span>
+        }
+      </div>
+    }
 
     <div class="field">
       <label class="field-label">Descrição</label>

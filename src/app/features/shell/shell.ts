@@ -7,6 +7,7 @@ interface NavItem {
   label: string;
   icon: string;
   route: string;
+  dentistOnly?: boolean;
 }
 
 @Component({
@@ -18,15 +19,20 @@ interface NavItem {
 export class ShellComponent {
   auth = inject(AuthService);
 
-  readonly navItems: NavItem[] = [
+  private readonly allNavItems: NavItem[] = [
     { label: 'Início',     icon: 'dashboard',         route: '/inicio' },
     { label: 'Agenda',     icon: 'calendar_month',    route: '/agenda' },
     { label: 'Pacientes',  icon: 'groups',            route: '/patients' },
     { label: 'Serviços',   icon: 'medical_services',  route: '/servicos' },
-    { label: 'Financeiro', icon: 'payments',          route: '/financeiro' },
-    { label: 'Equipe',     icon: 'badge',             route: '/equipe' },
-    { label: 'Assinatura', icon: 'workspace_premium', route: '/assinatura' },
+    { label: 'Financeiro', icon: 'payments',          route: '/financeiro',  dentistOnly: true },
+    { label: 'Equipe',     icon: 'badge',             route: '/equipe',      dentistOnly: true },
+    { label: 'Assinatura', icon: 'workspace_premium', route: '/assinatura',  dentistOnly: true },
   ];
+
+  private readonly isDentist = computed(() => this.auth.currentUser()?.role === 'DENTIST');
+
+  readonly navItems = computed(() =>
+    this.allNavItems.filter(item => !item.dentistOnly || this.isDentist()));
 
   readonly initials = computed(() => {
     const email = this.auth.currentUser()?.email ?? '';

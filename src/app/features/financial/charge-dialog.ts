@@ -5,7 +5,7 @@ import { Patient } from '../../core/models/patient.model';
 import { ApiError } from '../../core/models/api-error.model';
 import { PatientService } from '../../core/services/patient.service';
 import { ChargeService } from '../../core/services/charge.service';
-import { DialogRef } from '../../shared/ui/dialog/dialog.tokens';
+import { DIALOG_DATA, DialogRef } from '../../shared/ui/dialog/dialog.tokens';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { SelectComponent } from '../../shared/ui/select';
 import { SpinnerComponent } from '../../shared/ui/spinner';
@@ -22,11 +22,14 @@ export class ChargeDialogComponent implements OnInit {
   private charges  = inject(ChargeService);
   private toast    = inject(ToastService);
   private ref      = inject(DialogRef);
+  // Opened from a patient's record with { patientId, patientName } → lock the patient.
+  private readonly data = inject(DIALOG_DATA) as { patientId?: string; patientName?: string } | null;
 
   readonly loading     = signal(false);
   readonly patientList = signal<Patient[]>([]);
   readonly patientOptions = computed(() =>
     this.patientList().map(p => ({ value: p.id, label: p.fullName })));
+  readonly lockedPatientName = signal<string | null>(this.data?.patientName ?? null);
 
   form = this.fb.nonNullable.group({
     patientId:   ['', Validators.required],
@@ -35,7 +38,11 @@ export class ChargeDialogComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.patients.list().subscribe(list => this.patientList.set(list));
+    if (this.data?.patientId) {
+      this.form.controls.patientId.setValue(this.data.patientId);
+    } else {
+      this.patients.list().subscribe(list => this.patientList.set(list));
+    }
   }
 
   save() {

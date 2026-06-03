@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { dentistGuard } from './core/guards/dentist.guard';
 import { ShellComponent } from './features/shell/shell';
 
 export const routes: Routes = [
@@ -26,9 +27,9 @@ export const routes: Routes = [
       { path: 'patients/:id/edit', loadComponent: () => import('./features/patients/form/patient-form').then(m => m.PatientFormComponent) },
       { path: 'patients/:id',      loadComponent: () => import('./features/patients/prontuario/prontuario').then(m => m.ProntuarioComponent) },
       { path: 'servicos',          loadComponent: () => import('./features/services/services').then(m => m.ServicesComponent) },
-      { path: 'financeiro',        loadComponent: () => import('./features/financial/financial').then(m => m.FinancialComponent) },
-      { path: 'assinatura',        loadComponent: () => import('./features/billing/billing').then(m => m.BillingComponent) },
-      { path: 'equipe',            loadComponent: () => import('./features/team/team').then(m => m.TeamComponent) },
+      { path: 'financeiro',        canActivate: [dentistGuard], loadComponent: () => import('./features/financial/financial').then(m => m.FinancialComponent) },
+      { path: 'assinatura',        canActivate: [dentistGuard], loadComponent: () => import('./features/billing/billing').then(m => m.BillingComponent) },
+      { path: 'equipe',            canActivate: [dentistGuard], loadComponent: () => import('./features/team/team').then(m => m.TeamComponent) },
       { path: 'bem-vindo',         loadComponent: () => import('./features/onboarding/onboarding').then(m => m.OnboardingComponent) },
     ],
   },

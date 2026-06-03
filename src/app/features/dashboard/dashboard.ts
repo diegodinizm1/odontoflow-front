@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { DashboardSummary } from '../../core/models/dashboard.model';
 import { Appointment } from '../../core/models/appointment.model';
 import { DashboardService } from '../../core/services/dashboard.service';
+import { AuthService } from '../../core/services/auth.service';
 import { SpinnerComponent } from '../../shared/ui/spinner';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 
@@ -15,7 +16,10 @@ import { ToastService } from '../../shared/ui/toast/toast.service';
 })
 export class DashboardComponent implements OnInit {
   private service  = inject(DashboardService);
+  private auth     = inject(AuthService);
   private toast    = inject(ToastService);
+
+  readonly isDentist = computed(() => this.auth.currentUser()?.role === 'DENTIST');
 
   readonly loading = signal(true);
   readonly data    = signal<DashboardSummary | null>(null);
