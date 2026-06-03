@@ -25,8 +25,8 @@ test('shows the dashboard with KPI cards for an authenticated user', async ({ pa
   await registerClinic(page);
   await page.goto('/inicio');
   await expect(page.getByRole('heading', { name: 'Início' })).toBeVisible();
-  await expect(page.getByText('Pacientes')).toBeVisible();
-  await expect(page.getByText('Consultas hoje')).toBeVisible();
+  await expect(page.locator('.kpi-label', { hasText: 'Pacientes' })).toBeVisible();
+  await expect(page.locator('.kpi-label', { hasText: 'Consultas hoje' })).toBeVisible();
 });
 
 test('redirects unauthenticated users to login', async ({ page }) => {
