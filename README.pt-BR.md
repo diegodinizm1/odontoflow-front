@@ -4,6 +4,7 @@
 
 **🌐 Idioma:** [English](README.md) · **Português 🇧🇷**
 
+[![CI](https://github.com/diegodinizm1/odontoflow-front/actions/workflows/ci.yml/badge.svg)](https://github.com/diegodinizm1/odontoflow-front/actions/workflows/ci.yml)
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Angular Material](https://img.shields.io/badge/Angular%20Material-M2-757575?logo=angular&logoColor=white)

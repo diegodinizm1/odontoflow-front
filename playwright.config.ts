@@ -10,7 +10,7 @@ export default defineConfig({
   expect: { timeout: 7_000 },
   fullyParallel: false,
   retries: process.env.CI ? 1 : 0,
-  reporter: 'list',
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: 'http://localhost:4200',
     trace: 'on-first-retry',
