@@ -11,7 +11,8 @@ export const routes: Routes = [
       { path: 'register', loadComponent: () => import('./features/auth/register/register').then(m => m.RegisterComponent) },
     ],
   },
-  // Public, unauthenticated online-booking page (patient-facing).
+  // Public, unauthenticated online-booking (patient-facing): directory + clinic profile.
+  { path: 'agendar', loadComponent: () => import('./features/booking/clinic-directory').then(m => m.ClinicDirectoryComponent) },
   { path: 'agendar/:slug', loadComponent: () => import('./features/booking/public-booking').then(m => m.PublicBookingComponent) },
   {
     path: '',
@@ -24,6 +25,7 @@ export const routes: Routes = [
       { path: 'patients/new',      loadComponent: () => import('./features/patients/form/patient-form').then(m => m.PatientFormComponent) },
       { path: 'patients/:id/edit', loadComponent: () => import('./features/patients/form/patient-form').then(m => m.PatientFormComponent) },
       { path: 'patients/:id',      loadComponent: () => import('./features/patients/prontuario/prontuario').then(m => m.ProntuarioComponent) },
+      { path: 'servicos',          loadComponent: () => import('./features/services/services').then(m => m.ServicesComponent) },
       { path: 'financeiro',        loadComponent: () => import('./features/financial/financial').then(m => m.FinancialComponent) },
       { path: 'assinatura',        loadComponent: () => import('./features/billing/billing').then(m => m.BillingComponent) },
       { path: 'equipe',            loadComponent: () => import('./features/team/team').then(m => m.TeamComponent) },

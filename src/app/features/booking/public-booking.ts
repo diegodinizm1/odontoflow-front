@@ -1,8 +1,9 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { CurrencyPipe } from '@angular/common';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { PublicClinic } from '../../core/models/public-booking.model';
+import { PublicClinic, PublicService } from '../../core/models/public-booking.model';
 import { PublicBookingService } from '../../core/services/public-booking.service';
 import { ApiError } from '../../core/models/api-error.model';
 import { MaskDirective } from '../../core/directives/mask.directive';
@@ -16,7 +17,7 @@ import { ToastService } from '../../shared/ui/toast/toast.service';
   selector: 'app-public-booking',
   standalone: true,
   imports: [
-    ReactiveFormsModule, MaskDirective,
+    CurrencyPipe, ReactiveFormsModule, RouterLink, MaskDirective,
     SelectComponent, DatepickerComponent, SpinnerComponent,
   ],
   templateUrl: './public-booking.html',
@@ -34,6 +35,7 @@ export class PublicBookingComponent implements OnInit {
   readonly notFound      = signal(false);
   readonly clinic        = signal<PublicClinic | null>(null);
 
+  readonly serviceId     = signal<string | null>(null);
   readonly dentistId     = signal<string | null>(null);
   readonly date          = signal<Date | null>(null);
   readonly loadingSlots  = signal(false);
@@ -41,13 +43,16 @@ export class PublicBookingComponent implements OnInit {
   readonly selectedTime  = signal<string | null>(null);
 
   readonly booking       = signal(false);
-  readonly confirmation  = signal<{ dentistName: string; date: string; time: string } | null>(null);
+  readonly confirmation  = signal<{ dentistName: string; serviceName: string; date: string; time: string } | null>(null);
 
-  readonly canPickSlot = computed(() => !!this.dentistId() && !!this.date());
+  readonly selectedService = computed<PublicService | null>(() =>
+    this.clinic()?.services.find(s => s.id === this.serviceId()) ?? null);
   readonly dentistName = computed(() =>
     this.clinic()?.dentists.find(d => d.id === this.dentistId())?.fullName ?? '');
   readonly dentistOptions = computed(() =>
     (this.clinic()?.dentists ?? []).map(d => ({ value: d.id, label: d.fullName })));
+
+  readonly canPickSlot = computed(() => !!this.serviceId() && !!this.dentistId() && !!this.date());
 
   contact = this.fb.nonNullable.group({
     patientName:  ['', Validators.required],
@@ -60,6 +65,11 @@ export class PublicBookingComponent implements OnInit {
       next: c => { this.clinic.set(c); this.loadingClinic.set(false); },
       error: () => { this.notFound.set(true); this.loadingClinic.set(false); },
     });
+  }
+
+  pickService(s: PublicService) {
+    this.serviceId.set(s.id);
+    this.refreshSlots();
   }
 
   onDentistChange(id: string) {
@@ -75,12 +85,13 @@ export class PublicBookingComponent implements OnInit {
   private refreshSlots() {
     this.selectedTime.set(null);
     this.slots.set([]);
+    const serviceId = this.serviceId();
     const dentistId = this.dentistId();
     const date = this.date();
-    if (!dentistId || !date) return;
+    if (!serviceId || !dentistId || !date) return;
 
     this.loadingSlots.set(true);
-    this.service.availability(this.slug, dentistId, dateOnlyIso(date)).subscribe({
+    this.service.availability(this.slug, dentistId, serviceId, dateOnlyIso(date)).subscribe({
       next: a => { this.slots.set(a.slots); this.loadingSlots.set(false); },
       error: () => { this.slots.set([]); this.loadingSlots.set(false); },
     });
@@ -92,16 +103,21 @@ export class PublicBookingComponent implements OnInit {
     const time = this.selectedTime();
     const date = this.date();
     const dentistId = this.dentistId();
-    if (!time || !date || !dentistId || this.contact.invalid || this.booking()) return;
+    const serviceId = this.serviceId();
+    if (!time || !date || !dentistId || !serviceId || this.contact.invalid || this.booking()) return;
 
     const v = this.contact.getRawValue();
     this.booking.set(true);
     this.service.book(this.slug, {
-      dentistId, date: dateOnlyIso(date), time,
+      dentistId, serviceId, date: dateOnlyIso(date), time,
       patientName: v.patientName, patientPhone: v.patientPhone,
     }).subscribe({
       next: () => {
-        this.confirmation.set({ dentistName: this.dentistName(), date: dateOnlyIso(date), time });
+        this.confirmation.set({
+          dentistName: this.dentistName(),
+          serviceName: this.selectedService()?.name ?? '',
+          date: dateOnlyIso(date), time,
+        });
         this.booking.set(false);
       },
       error: (err: HttpErrorResponse) => {

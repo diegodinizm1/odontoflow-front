@@ -47,7 +47,8 @@ The frontend for **OdontoFlow**, a B2B platform for dental clinics. It pairs wit
 - 📊 **Dashboard** — landing overview with KPI cards (patients, today's appointments, monthly revenue, pending) and today's agenda.
 - 🔐 **Auth & onboarding** — login and a two-step clinic registration stepper, followed by a guided setup checklist.
 - 📅 **Agenda** — weekly calendar with appointment blocks you can **drag & drop to reschedule** (with server-side overlap checks), create and cancel. **Role-aware**: dentists see only their own agenda, receptionists see all and get a dentist filter.
-- 🌐 **Public online booking** — a no-login page (`/agendar/:slug`) where patients pick a dentist, see free slots and request an appointment. Requests show up as **pending** in the agenda for the clinic to confirm or reject, and the dashboard offers a copyable shareable link.
+- 🛎️ **Services** — manage the clinic's bookable procedures (name, duration, price) that patients choose from when booking online.
+- 🌐 **Public online booking (marketplace)** — a no-login directory (`/agendar`) lists every clinic; each clinic profile (`/agendar/:slug`) lets patients pick a **procedure**, dentist, day and free slot. Requests show up as **pending** in the agenda for the clinic to confirm or reject, and the dashboard offers a copyable shareable link.
 - 🦷 **Interactive odontogram** — anatomically drawn teeth (SVG), click-to-cycle tooth status, live legend; in-memory state saved as a single payload.
 - 👥 **Patients** — searchable list, create/edit form (with Brazilian input masks for CPF/CNPJ and phone), full clinical record (odontogram + evolution timeline + radiographs).
 - 🗂️ **Treatment plans** — build a budget with line items in the patient record; complete items to bill them in finances.

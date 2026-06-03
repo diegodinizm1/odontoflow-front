@@ -1,0 +1,59 @@
+<div class="page" style="max-width: 900px;">
+
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Serviços</h1>
+      <p class="page-sub">Procedimentos oferecidos no agendamento online</p>
+    </div>
+    <button class="btn btn-primary" (click)="openForm()">
+      <span class="material-symbols-rounded">add</span>
+      Novo serviço
+    </button>
+  </header>
+
+  @if (loading()) {
+    <div class="flex justify-center py-20 text-brand-700"><app-spinner [size]="38" /></div>
+  } @else if (services().length === 0) {
+    <div class="card flex flex-col items-center justify-center text-center py-16 px-6">
+      <div class="w-14 h-14 rounded-2xl bg-brand-50 text-brand-700 flex items-center justify-center mb-4">
+        <span class="material-symbols-rounded" style="font-size:28px">medical_services</span>
+      </div>
+      <h2 class="font-display text-xl text-ink mb-1">Nenhum serviço cadastrado</h2>
+      <p class="text-ink-soft text-sm mb-6 max-w-xs">Cadastre os procedimentos que os pacientes poderão escolher ao agendar online.</p>
+      <button class="btn btn-primary" (click)="openForm()">
+        <span class="material-symbols-rounded">add</span> Cadastrar serviço
+      </button>
+    </div>
+  } @else {
+    <div class="card overflow-hidden">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Serviço</th>
+            <th>Duração</th>
+            <th>Preço</th>
+            <th class="text-right"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of services(); track s.id) {
+            <tr>
+              <td><span class="font-medium text-ink">{{ s.name }}</span></td>
+              <td><span class="text-ink-soft text-sm">{{ s.durationMinutes }} min</span></td>
+              <td><span class="font-semibold text-ink">{{ s.price | currency:'BRL' }}</span></td>
+              <td class="text-right whitespace-nowrap">
+                <button class="btn-icon" (click)="openForm(s)" uiTooltip="Editar">
+                  <span class="material-symbols-rounded" style="font-size:19px">edit</span>
+                </button>
+                <button class="btn-icon" (click)="remove(s)" uiTooltip="Remover">
+                  <span class="material-symbols-rounded" style="font-size:19px">delete</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>

@@ -26,11 +26,24 @@ async function createClinic(): Promise<{ slug: string; dentistName: string }> {
   return { slug, dentistName };
 }
 
+test('the public directory lists clinics and links to a profile', async ({ page }) => {
+  const { slug } = await createClinic();
+
+  await page.goto('/agendar');
+  await expect(page.getByRole('heading', { name: /Agende sua consulta/ })).toBeVisible();
+  await page.locator(`a[href="/agendar/${slug}"]`).first().click();
+  await expect(page).toHaveURL(new RegExp(`/agendar/${slug}$`));
+  await expect(page.getByRole('heading', { name: 'Clínica Online E2E' })).toBeVisible();
+});
+
 test('a patient books an appointment online without logging in', async ({ page }) => {
   const { slug, dentistName } = await createClinic();
 
   await page.goto(`/agendar/${slug}`);
   await expect(page.getByRole('heading', { name: 'Clínica Online E2E' })).toBeVisible();
+
+  // pick a service (first card)
+  await page.locator('.svc-card').first().click();
 
   // pick the dentist
   await page.locator('.ui-select-trigger').click();

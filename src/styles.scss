@@ -431,7 +431,7 @@ body {
 /* ============================================================
    Page primitives
    ============================================================ */
-.page { padding: 28px 36px; max-width: 1180px; }
+.page { padding: 28px 36px; max-width: 1180px; margin-inline: auto; }
 .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
 .page-title { font-family: 'Fraunces', Georgia, serif; font-size: 1.6rem; font-weight: 500; color: var(--ink); line-height: 1.2; }
 .page-sub { font-size: 0.875rem; color: var(--ink-soft); margin-top: 2px; }
@@ -576,6 +576,25 @@ $agenda-gutter: 64px;
   background: var(--brand-700, #1F6155);
   border-color: var(--brand-700, #1F6155);
   color: #fff;
+}
+
+/* Public booking — service cards */
+.svc-card {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color .12s, box-shadow .12s, background .12s;
+}
+.svc-card:hover { border-color: var(--brand-300); }
+.svc-card--active {
+  border-color: var(--brand-700);
+  box-shadow: 0 0 0 1px var(--brand-700);
+  background: var(--brand-50);
 }
 
 /* ============================================================

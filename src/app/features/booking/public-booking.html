@@ -1,10 +1,15 @@
 <div class="min-h-screen bg-paper py-10 px-4">
-  <div class="mx-auto" style="max-width: 560px;">
+  <div class="mx-auto" style="max-width: 640px;">
 
     <!-- Brand header -->
-    <div class="flex items-center justify-center gap-2 mb-6">
-      <span class="material-symbols-rounded text-brand-700" style="font-size: 28px;">dentistry</span>
-      <span class="font-display text-2xl text-ink">OdontoFlow</span>
+    <div class="flex items-center justify-between mb-6">
+      <a routerLink="/agendar" class="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-soft hover:text-ink">
+        <span class="material-symbols-rounded" style="font-size:18px">arrow_back</span> Clínicas
+      </a>
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-rounded text-brand-700" style="font-size: 24px;">dentistry</span>
+        <span class="font-display text-lg text-ink">OdontoFlow</span>
+      </div>
     </div>
 
     @if (loadingClinic()) {
@@ -17,58 +22,78 @@
       </div>
     } @else if (confirmation(); as c) {
       <!-- Success -->
-      <div class="card text-center py-14">
+      <div class="card text-center py-14 px-6">
         <span class="material-symbols-rounded text-brand-700" style="font-size: 48px;">check_circle</span>
         <h1 class="font-display text-2xl text-ink mt-3 mb-2">Solicitação enviada!</h1>
         <p class="text-ink-soft">
-          Sua solicitação com <strong>{{ c.dentistName }}</strong> para
-          <strong>{{ c.date.split('-')[2] }}/{{ c.date.split('-')[1] }}</strong> às
-          <strong>{{ c.time }}</strong> foi recebida.
+          <strong>{{ c.serviceName }}</strong> com <strong>{{ c.dentistName }}</strong><br />
+          em <strong>{{ c.date.split('-')[2] }}/{{ c.date.split('-')[1] }}</strong> às <strong>{{ c.time }}</strong>.
         </p>
         <p class="text-ink-soft text-sm mt-3">
           A <strong>{{ clinic()?.clinicName }}</strong> vai confirmar e entrar em contato pelo seu telefone.
         </p>
       </div>
     } @else {
-      <div class="card">
+      <div class="card p-6">
         <h1 class="font-display text-2xl text-ink mb-1">{{ clinic()?.clinicName }}</h1>
         <p class="text-ink-soft text-sm mb-6">Agende sua consulta online em poucos passos.</p>
 
-        <!-- 1. Dentist -->
-        <div class="field">
-          <label class="field-label">Profissional</label>
-          <app-select [value]="dentistId()" [options]="dentistOptions()"
-                      placeholder="Selecione o profissional" (valueChange)="onDentistChange($event)" />
+        <!-- 1. Service -->
+        <p class="text-[11px] font-bold text-ink-faint uppercase tracking-[0.1em] mb-2">1 · Procedimento</p>
+        <div class="grid sm:grid-cols-2 gap-2.5 mb-6">
+          @for (s of clinic()?.services ?? []; track s.id) {
+            <button type="button" class="svc-card" [class.svc-card--active]="serviceId() === s.id"
+                    (click)="pickService(s)">
+              <span class="font-semibold text-ink text-sm">{{ s.name }}</span>
+              <span class="flex items-center justify-between mt-1 text-xs text-ink-soft">
+                <span class="inline-flex items-center gap-1">
+                  <span class="material-symbols-rounded" style="font-size:14px">schedule</span>{{ s.durationMinutes }} min
+                </span>
+                <span class="font-semibold text-brand-700">{{ s.price | currency:'BRL' }}</span>
+              </span>
+            </button>
+          }
+          @if ((clinic()?.services ?? []).length === 0) {
+            <p class="text-sm text-ink-faint">Esta clínica ainda não cadastrou serviços.</p>
+          }
         </div>
 
-        <!-- 2. Date -->
-        <div class="field">
-          <label class="field-label">Dia</label>
-          <app-datepicker [value]="date()" [min]="today" (valueChange)="onDateChange($event)" />
-        </div>
-
-        <!-- 3. Slots -->
-        @if (canPickSlot()) {
-          <div class="mb-5">
-            <p class="text-sm font-medium text-ink-soft mb-2">Horários livres</p>
-            @if (loadingSlots()) {
-              <div class="flex justify-center py-6 text-brand-700"><app-spinner [size]="26" /></div>
-            } @else if (slots().length === 0) {
-              <p class="text-sm text-ink-faint py-3">Nenhum horário disponível nesse dia. Tente outra data.</p>
-            } @else {
-              <div class="flex flex-wrap gap-2">
-                @for (s of slots(); track s) {
-                  <button type="button"
-                          class="slot-chip"
-                          [class.slot-chip--active]="selectedTime() === s"
-                          (click)="pickSlot(s)">{{ s }}</button>
-                }
-              </div>
-            }
+        @if (serviceId()) {
+          <!-- 2. Dentist + 3. Date -->
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="field">
+              <label class="field-label">2 · Profissional</label>
+              <app-select [value]="dentistId()" [options]="dentistOptions()"
+                          placeholder="Selecione" (valueChange)="onDentistChange($event)" />
+            </div>
+            <div class="field">
+              <label class="field-label">3 · Dia</label>
+              <app-datepicker [value]="date()" [min]="today" (valueChange)="onDateChange($event)" />
+            </div>
           </div>
+
+          <!-- 4. Slots -->
+          @if (canPickSlot()) {
+            <div class="mb-5">
+              <p class="text-sm font-medium text-ink-soft mb-2">4 · Horários livres</p>
+              @if (loadingSlots()) {
+                <div class="flex justify-center py-6 text-brand-700"><app-spinner [size]="26" /></div>
+              } @else if (slots().length === 0) {
+                <p class="text-sm text-ink-faint py-3">Nenhum horário disponível nesse dia. Tente outra data.</p>
+              } @else {
+                <div class="flex flex-wrap gap-2">
+                  @for (s of slots(); track s) {
+                    <button type="button" class="slot-chip"
+                            [class.slot-chip--active]="selectedTime() === s"
+                            (click)="pickSlot(s)">{{ s }}</button>
+                  }
+                </div>
+              }
+            </div>
+          }
         }
 
-        <!-- 4. Contact + confirm -->
+        <!-- 5. Contact + confirm -->
         @if (selectedTime()) {
           <form [formGroup]="contact" class="border-t border-line pt-5">
             <div class="field">

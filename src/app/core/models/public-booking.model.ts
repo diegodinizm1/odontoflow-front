@@ -3,10 +3,25 @@ export interface PublicDentist {
   fullName: string;
 }
 
+export interface PublicService {
+  id: string;
+  name: string;
+  durationMinutes: number;
+  price: number;
+}
+
+export interface ClinicSummary {
+  clinicName: string;
+  publicSlug: string;
+  dentistCount: number;
+  serviceCount: number;
+}
+
 export interface PublicClinic {
   clinicName: string;
   publicSlug: string;
   dentists: PublicDentist[];
+  services: PublicService[];
 }
 
 export interface Availability {
@@ -17,6 +32,7 @@ export interface Availability {
 
 export interface CreateBookingRequest {
   dentistId: string;
+  serviceId: string;
   date: string;        // 'YYYY-MM-DD'
   time: string;        // 'HH:mm'
   patientName: string;

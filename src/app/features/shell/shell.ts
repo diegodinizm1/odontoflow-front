@@ -22,6 +22,7 @@ export class ShellComponent {
     { label: 'Início',     icon: 'dashboard',         route: '/inicio' },
     { label: 'Agenda',     icon: 'calendar_month',    route: '/agenda' },
     { label: 'Pacientes',  icon: 'groups',            route: '/patients' },
+    { label: 'Serviços',   icon: 'medical_services',  route: '/servicos' },
     { label: 'Financeiro', icon: 'payments',          route: '/financeiro' },
     { label: 'Equipe',     icon: 'badge',             route: '/equipe' },
     { label: 'Assinatura', icon: 'workspace_premium', route: '/assinatura' },
