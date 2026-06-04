@@ -22,19 +22,34 @@
     </nav>
 
     <!-- User -->
-    <div class="px-3 pb-4 pt-2 border-t border-line shrink-0">
-      <div class="flex items-center gap-3 px-2.5 py-2 rounded-xl hover:bg-paper transition-colors">
+    <div class="px-3 pb-4 pt-2 border-t border-line shrink-0 relative" (uiClickOutside)="closeMenu()">
+      <button type="button" class="flex items-center gap-3 w-full px-2.5 py-2 rounded-xl hover:bg-paper transition-colors text-left"
+              [attr.aria-expanded]="menuOpen()" (click)="toggleMenu()">
         <div class="w-8 h-8 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center shrink-0 font-semibold text-xs">
           {{ initials() }}
         </div>
         <div class="flex-1 min-w-0">
-          <p class="text-[13px] font-medium text-ink truncate leading-tight">{{ auth.currentUser()?.email }}</p>
-          <p class="text-[11px] text-ink-faint leading-tight">Dentista</p>
+          <p class="text-[13px] font-medium text-ink truncate leading-tight">{{ userName() }}</p>
+          <p class="text-[11px] text-ink-faint leading-tight">{{ roleLabel() }}</p>
         </div>
-        <button type="button" class="btn-icon shrink-0" (click)="auth.logout()" uiTooltip="Sair">
-          <span class="material-symbols-rounded" style="font-size:19px">logout</span>
-        </button>
-      </div>
+        <span class="material-symbols-rounded text-ink-faint shrink-0" style="font-size:18px">
+          {{ menuOpen() ? 'expand_more' : 'expand_less' }}
+        </span>
+      </button>
+
+      @if (menuOpen()) {
+        <div class="ui-menu-panel" style="position:absolute; bottom:64px; left:12px; right:12px;">
+          <a class="ui-menu-item" routerLink="/perfil" (click)="closeMenu()">
+            <span class="material-symbols-rounded">person</span> Meu perfil
+          </a>
+          <a class="ui-menu-item" routerLink="/configuracoes" (click)="closeMenu()">
+            <span class="material-symbols-rounded">settings</span> Configurações
+          </a>
+          <button type="button" class="ui-menu-item is-danger" (click)="closeMenu(); auth.logout()">
+            <span class="material-symbols-rounded">logout</span> Sair
+          </button>
+        </div>
+      }
     </div>
 
   </aside>

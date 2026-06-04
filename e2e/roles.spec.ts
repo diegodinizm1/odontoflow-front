@@ -53,6 +53,36 @@ test('receptionist cannot see or reach finances, team or billing', async ({ page
   await expect(page).toHaveURL(/\/inicio/);
 });
 
+test('receptionist sees name + role and the user menu, and uses the Cobranças page', async ({ page }) => {
+  const { email } = await clinicWithReceptionist();
+  await login(page, email);
+
+  // sidebar shows the name and the correct role
+  await expect(page.locator('aside').getByText('Recep Rita')).toBeVisible();
+  await expect(page.locator('aside').getByText('Recepcionista')).toBeVisible();
+
+  // user menu opens with profile/settings/logout
+  await page.locator('aside button[aria-expanded]').click();
+  await expect(page.getByRole('link', { name: 'Meu perfil' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Sair' })).toBeVisible();
+
+  // a patient to charge
+  await page.goto('/patients/new');
+  await page.fill('input[formcontrolname=fullName]', 'Paciente Balcão');
+  await page.getByRole('button', { name: 'Cadastrar paciente' }).click();
+  await page.waitForURL(/\/patients$/);
+
+  // create a charge from the dedicated Cobranças page
+  await page.goto('/cobrancas');
+  await page.getByRole('button', { name: 'Nova cobrança' }).first().click();
+  await page.locator('app-select .ui-select-trigger').click();
+  await page.getByRole('option', { name: 'Paciente Balcão' }).click();
+  await page.fill('input[formcontrolname=description]', 'Limpeza');
+  await page.fill('input[formcontrolname=amount]', '150');
+  await page.getByRole('button', { name: 'Criar cobrança' }).click();
+  await expect(page.getByText('Limpeza')).toBeVisible();
+});
+
 test('receptionist can still create a charge from a patient record', async ({ page }) => {
   const { email } = await clinicWithReceptionist();
   await login(page, email);

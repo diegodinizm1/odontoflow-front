@@ -1,0 +1,66 @@
+<div class="page max-w-2xl">
+
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Meu perfil</h1>
+      <p class="page-sub">Seus dados de acesso</p>
+    </div>
+  </header>
+
+  <!-- Identity -->
+  <section class="card p-6 mb-5 flex items-center gap-4">
+    <div class="w-14 h-14 rounded-2xl bg-brand-50 text-brand-700 flex items-center justify-center font-display text-xl shrink-0">
+      {{ (user()?.name || user()?.email || '?').slice(0, 1).toUpperCase() }}
+    </div>
+    <div class="min-w-0">
+      <p class="font-display text-xl text-ink leading-tight">{{ user()?.name }}</p>
+      <p class="text-sm text-ink-soft">{{ user()?.email }}</p>
+      <span class="charge-pill charge-paid mt-1 inline-flex">{{ roleLabel() }}</span>
+    </div>
+  </section>
+
+  <!-- Change password -->
+  <section class="card p-6">
+    <h2 class="font-display text-lg text-ink mb-1">Alterar senha</h2>
+    <p class="text-sm text-ink-soft mb-4">Use uma senha de pelo menos 8 caracteres.</p>
+
+    <form [formGroup]="form" class="flex flex-col" (ngSubmit)="save()">
+      <div class="field">
+        <label class="field-label">Senha atual</label>
+        <div class="relative">
+          <input class="input pr-11" formControlName="currentPassword" [type]="hideCurrent() ? 'password' : 'text'" autocomplete="current-password" />
+          <button type="button" tabindex="-1" class="btn-icon absolute right-1 top-1/2 -translate-y-1/2"
+                  (click)="hideCurrent.set(!hideCurrent())">
+            <span class="material-symbols-rounded">{{ hideCurrent() ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+        @if (form.controls.currentPassword.invalid && form.controls.currentPassword.touched) {
+          <span class="field-error">Informe a senha atual</span>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field-label">Nova senha</label>
+        <div class="relative">
+          <input class="input pr-11" formControlName="newPassword" [type]="hideNew() ? 'password' : 'text'" autocomplete="new-password" />
+          <button type="button" tabindex="-1" class="btn-icon absolute right-1 top-1/2 -translate-y-1/2"
+                  (click)="hideNew.set(!hideNew())">
+            <span class="material-symbols-rounded">{{ hideNew() ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+        @if (form.controls.newPassword.hasError('required') && form.controls.newPassword.touched) {
+          <span class="field-error">Informe a nova senha</span>
+        } @else if (form.controls.newPassword.hasError('minlength')) {
+          <span class="field-error">Mínimo de 8 caracteres</span>
+        }
+      </div>
+
+      <div class="flex justify-end">
+        <button class="btn btn-primary" type="submit" [disabled]="form.invalid || loading()">
+          @if (loading()) { <app-spinner [size]="18" /> } @else { Alterar senha }
+        </button>
+      </div>
+    </form>
+  </section>
+
+</div>

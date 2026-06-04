@@ -1,0 +1,58 @@
+<div class="page" style="max-width: 900px;">
+
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Cobranças</h1>
+      <p class="page-sub">Cobranças pendentes dos pacientes</p>
+    </div>
+    <button class="btn btn-primary" (click)="openCreate()">
+      <span class="material-symbols-rounded">add</span>
+      Nova cobrança
+    </button>
+  </header>
+
+  @if (loading()) {
+    <div class="flex justify-center py-20 text-brand-700"><app-spinner [size]="38" /></div>
+  } @else if (pending().length === 0) {
+    <div class="card flex flex-col items-center justify-center text-center py-16 px-6">
+      <div class="w-14 h-14 rounded-2xl bg-brand-50 text-brand-700 flex items-center justify-center mb-4">
+        <span class="material-symbols-rounded" style="font-size:28px">receipt_long</span>
+      </div>
+      <h2 class="font-display text-xl text-ink mb-1">Nenhuma cobrança pendente</h2>
+      <p class="text-ink-soft text-sm mb-6 max-w-xs">Crie uma cobrança para um paciente quando precisar receber por um atendimento.</p>
+      <button class="btn btn-primary" (click)="openCreate()">
+        <span class="material-symbols-rounded">add</span> Nova cobrança
+      </button>
+    </div>
+  } @else {
+    <div class="card overflow-hidden">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Criada em</th>
+            <th class="text-right"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of pending(); track c.id) {
+            <tr>
+              <td><span class="font-medium text-ink">{{ c.patientName }}</span></td>
+              <td><span class="text-ink-soft text-sm">{{ c.description }}</span></td>
+              <td><span class="font-semibold text-ink">{{ c.amount | currency:'BRL' }}</span></td>
+              <td><span class="text-ink-soft text-sm">{{ c.createdAt | date:'dd/MM/yyyy' }}</span></td>
+              <td class="text-right">
+                <button class="btn btn-stroked h-9 px-3" (click)="markPaid(c)">
+                  <span class="material-symbols-rounded" style="font-size:18px">check_circle</span> Marcar paga
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
